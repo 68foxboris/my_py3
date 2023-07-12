@@ -34,8 +34,7 @@ eListbox::eListbox(eWidget *parent) : eWidget(parent), m_scrollbar_mode(showNeve
 	memset(static_cast<void *>(&m_style), 0, sizeof(m_style));
 	m_style.m_text_padding = eListbox::defaultPadding;
 	m_style.m_selection_zoom = 1.0;
-	m_style.m_selection_width = m_itemwidth;
-	m_style.m_selection_height = m_itemheight;
+	//	setContent(new eListboxStringContent());
 
 	allowNativeKeys(true);
 
@@ -385,8 +384,6 @@ void eListbox::updateScrollBar()
 
 				m_scrollbar->setStartEnd(start, end, true);
 			}
-			if (scrollbarvisible != scrollbarvisibleOld)
-				recalcSizeAlignment(scrollbarvisible);
 			return;
 		}
 
@@ -498,7 +495,7 @@ int eListbox::event(int event, void *data, void *data2)
 			if (sel)
 				line = m_orientation == orGrid ? (i / m_max_columns) : i;
 
-			entryRect = eRect(posx + xOffset, posy + yOffset, m_style.m_selection_width, m_style.m_selection_height);
+			entryRect = eRect(posx + xOffset, posy + yOffset, m_itemwidth * m_style.m_selection_zoom, m_itemheight * m_style.m_selection_zoom);
 			gRegion entry_clip_rect = paint_region & entryRect;
 
 			if (!entry_clip_rect.empty())
@@ -630,12 +627,9 @@ void eListbox::recalcSize()
 	m_prev_scrollbar_page = -1;
 	if (m_orientation == orVertical)
 	{
-		m_style.m_selection_height = m_itemheight;
 		m_itemwidth_set = false; // reset m_itemwidth
-		if (size().width() > -1) {
+		if (size().width() > -1)
 			m_itemwidth = size().width();
-			m_style.m_selection_width = m_itemwidth;
-		}
 		if (m_content)
 			m_content->setSize(eSize(m_itemwidth, m_itemheight));
 		m_max_rows = (size().height() - m_spacing.y() * 2) / (m_itemheight + m_spacing.y() * 2);
@@ -646,7 +640,6 @@ void eListbox::recalcSize()
 		{
 			m_style.m_selection_zoom = 1.0;
 			m_itemheight = size().height();
-			m_style.m_selection_height = m_itemheight;
 		}
 		if (m_content)
 			m_content->setSize(eSize(m_itemwidth, m_itemheight));
@@ -654,7 +647,7 @@ void eListbox::recalcSize()
 		m_max_columns = w / (m_itemwidth + m_spacing.x());
 		if(m_style.m_selection_zoom > 1.0)
 		{
-			int item_w_zoom = (m_style.m_selection_width) + m_spacing.x();
+			int item_w_zoom = (m_itemwidth * m_style.m_selection_zoom) + m_spacing.x();
 			if (m_max_columns > 1) {
 				if(w < (item_w_zoom + (m_max_columns - 1) * (m_itemwidth + m_spacing.x())))
 					m_max_columns --;
@@ -675,8 +668,8 @@ void eListbox::recalcSize()
 		if (m_style.m_selection_zoom > 1.0)
 		{
 
-			int item_w_zoom = m_style.m_selection_width + m_spacing.x();
-			int item_h_zoom = m_style.m_selection_height + m_spacing.y();
+			int item_w_zoom = (m_itemwidth * m_style.m_selection_zoom) + m_spacing.x();
+			int item_h_zoom = (m_itemheight * m_style.m_selection_zoom) + m_spacing.y();
 
 			if (m_max_columns > 1)
 			{
@@ -711,51 +704,29 @@ void eListbox::recalcSize()
 void eListbox::recalcSizeAlignment(bool scrollbarVisible)
 {
 
-	if (m_orientation != orVertical && m_item_alignment != itemAlignLeftTop)
+	if (m_orientation != orVertical && m_item_alignment != itemAlignDefault)
 	{
 
 		int xscrollBar = (m_orientation == orGrid) ? ((scrollbarVisible) ? m_scrollbar->size().width() + m_scrollbar_offset : 0) : 0;
 		int yscrollBar = (m_orientation == orHorizontal) ? ((scrollbarVisible) ? m_scrollbar->size().height() + m_scrollbar_offset : 0) : 0;
 		int xfullSpace = size().width() - xscrollBar;
 		int yfullSpace = size().height() - yscrollBar;
-		int xitemSpace = m_style.m_selection_width + m_defined_spacing.x();
-		if(m_max_columns > 1)
-			xitemSpace += ((m_max_columns - 1) * (m_itemwidth + m_defined_spacing.x()));
+		int xitemSpace = (m_max_columns > 1) ? ((m_max_columns - 1) * (m_itemwidth + m_spacing.x()) + m_itemwidth * m_style.m_selection_zoom) : (m_itemwidth * m_style.m_selection_zoom) + m_spacing.x();
+		int yitemSpace = (m_max_rows > 1) ? ((m_max_rows - 1) * (m_itemheight + m_spacing.y()) + m_itemheight * m_style.m_selection_zoom) : (m_itemheight * m_style.m_selection_zoom) + m_spacing.y();
 
-		int yitemSpace = m_style.m_selection_height + m_defined_spacing.y();
-		if(m_max_rows > 1)
-			yitemSpace += ((m_max_rows - 1) * (m_itemheight + m_defined_spacing.y()));
 
 		int scrollbarLeftSpace = (m_scrollbar_mode == showLeftOnDemand || m_scrollbar_mode == showLeftAlways) ? xscrollBar : 0;
 		int scrollbarTopSpace = (m_scrollbar_mode == showTopOnDemand || m_scrollbar_mode == showTopAlways) ? yscrollBar : 0;
-
-		m_spacing = m_defined_spacing;
 
 		if (xfullSpace > xitemSpace)
 		{
 			if (m_item_alignment & itemHorizontalAlignCenter)
 				xOffset = ((xfullSpace - xitemSpace) / 2) + scrollbarLeftSpace;
-			if (m_item_alignment & itemHorizontalAlignRight)
-				xOffset = (xfullSpace - xitemSpace) + scrollbarLeftSpace;
-			if (m_item_alignment & itemHorizontalAlignJustify) {
-				xOffset = scrollbarLeftSpace;
-				xitemSpace = m_style.m_selection_width + ((m_max_columns - 1) * m_itemwidth);
-				int xspace = (xfullSpace - xitemSpace) / (m_max_columns - 1);
-				m_spacing.setX(xspace);
-			}
 		}
 		if (yfullSpace > yitemSpace)
 		{
 			if (m_item_alignment & itemVertialAlignMiddle)
 				yOffset = ((yfullSpace - yitemSpace) / 2) + scrollbarTopSpace;
-			if (m_item_alignment & itemVertialAlignBottom)
-				yOffset = (yfullSpace - yitemSpace) + scrollbarTopSpace;
-			if (m_item_alignment & itemVertialAlignJustify) {
-				yOffset = scrollbarTopSpace;
-				yitemSpace = m_style.m_selection_height + ((m_max_rows - 1) * m_itemheight);
-				int yspace = (yfullSpace - yitemSpace) / (m_max_rows - 1);
-				m_spacing.setY(yspace);
-			}
 		}
 	}
 
@@ -779,7 +750,6 @@ void eListbox::setItemHeight(int h)
 	{
 		m_itemheight = h;
 		m_itemheight_set = true;
-		m_style.m_selection_height = h;
 		recalcSize();
 	}
 }
@@ -791,7 +761,6 @@ void eListbox::setItemWidth(int w)
 		eDebug("[eListbox] DO setItemWidth %d", w);
 		m_itemwidth = w;
 		m_itemwidth_set = true;
-		m_style.m_selection_width = w;
 		recalcSize();
 	}
 }
@@ -974,24 +943,6 @@ void eListbox::setBackgroundColorSelected(gRGB &col)
 	m_style.is_set.background_color_selected = 1;
 }
 
-void eListbox::setBackgroundGradient(gRGB &start, gRGB &end, int direction, int flag)
-{
-	m_style.m_background_gradient_color_start = start;
-	m_style.m_background_gradient_color_end = end;
-	m_style.m_background_color_gradient_direction = direction;
-	m_style.m_background_color_gradient_flag = flag;
-	m_style.is_set.background_gradient_color = 1;
-}
-
-void eListbox::setBackgroundGradientSelected(gRGB &start, gRGB &end, int direction, int flag)
-{
-	m_style.m_background_gradient_color_selected_start = start;
-	m_style.m_background_gradient_color_selected_end = end;
-	m_style.m_background_color_gradient_selected_direction = direction;
-	m_style.m_background_color_gradient_selected_flag = flag;
-	m_style.is_set.background_gradient_selected_color = 1;
-}
-
 void eListbox::setForegroundColor(gRGB &col)
 {
 	m_style.m_foreground_color = col;
@@ -1107,7 +1058,6 @@ void eListbox::setItemSpacing(const ePoint &spacing, bool innerOnly)
 	if ((spacing.x() >= 0 && spacing.y() >= 0))
 	{
 		m_spacing = spacing;
-		m_defined_spacing = spacing;
 		m_spacing_innerOnly = innerOnly;
 		recalcSize();
 		invalidate();
@@ -1128,35 +1078,9 @@ void eListbox::setSelectionZoom(float zoom)
 		m_style.m_selection_zoom = zoom;
 		if (m_style.m_font)
 			m_style.m_font_zoomed = new gFont(m_style.m_font->family, m_style.m_font->pointSize * zoom);
-
-		m_style.m_selection_width = m_itemwidth * zoom;
-		m_style.m_selection_height = m_itemheight * zoom;
-
 		recalcSize();
 		invalidate();
 	}
-}
-
-void eListbox::setSelectionZoomSize(int width, int height, int zoomContentMode)
-{
-
-	if(m_orientation != orVertical && m_itemwidth && m_itemheight && width > m_itemwidth && height > m_itemheight) {
-
-		m_style.m_selection_width = width;
-		m_style.m_selection_height = height;
-
-		m_style.m_selection_zoom = (float)width / (float)m_itemwidth;
-		m_style.is_set.zoom_content = zoomContentMode == 1;
-		m_style.is_set.zoom_move_content = zoomContentMode == 2;
-
-		if (m_style.m_selection_zoom > 1.0 && m_style.m_font)
-			m_style.m_font_zoomed = new gFont(m_style.m_font->family, m_style.m_font->pointSize * m_style.m_selection_zoom);
-
-		recalcSize();
-		invalidate();
-
-	}
-
 }
 
 ePoint eListbox::getItemPostion(int index)
@@ -1526,8 +1450,8 @@ void eListbox::moveSelection(int dir)
 		else if (m_selected != oldSel)
 		{
 			/* redraw the old and newly selected */
-			gRegion inv = eRect(getItemPostion(m_selected), eSize((m_style.m_selection_width), (m_style.m_selection_height)));
-			inv |= eRect(getItemPostion(oldSel), eSize((m_style.m_selection_width), (m_style.m_selection_height)));
+			gRegion inv = eRect(getItemPostion(m_selected), eSize((m_itemwidth * m_style.m_selection_zoom), (m_itemheight * m_style.m_selection_zoom)));
+			inv |= eRect(getItemPostion(oldSel), eSize((m_itemwidth * m_style.m_selection_zoom), (m_itemheight * m_style.m_selection_zoom)));
 			invalidate(inv);
 		}
 	}
@@ -1539,8 +1463,8 @@ void eListbox::moveSelection(int dir)
 		}
 		else if (m_selected != oldSel)
 		{
-			gRegion inv = eRect(getItemPostion(m_selected), eSize((m_style.m_selection_width), (m_style.m_selection_height)));
-			inv |= eRect(getItemPostion(oldSel), eSize((m_style.m_selection_width), (m_style.m_selection_height)));
+			gRegion inv = eRect(getItemPostion(m_selected), eSize((m_itemwidth * m_style.m_selection_zoom), (m_itemheight * m_style.m_selection_zoom)));
+			inv |= eRect(getItemPostion(oldSel), eSize((m_itemwidth * m_style.m_selection_zoom), (m_itemheight * m_style.m_selection_zoom)));
 			invalidate(inv);
 		}
 	}
@@ -1554,23 +1478,19 @@ int eListbox::moveSelectionLineMode(bool doUp, bool doDown, int dir, int oldSel,
 	if (m_orientation == orGrid)
 	{
 		int newline = (m_selected / m_max_columns);
-		if (!doUp && newline < m_max_rows)
+		if (newline < m_max_rows)
 		{
 			return 0;
 		}
 		int newlinecalc = (m_selected / m_max_columns) - oldTopLeft;
 
+		if (doUp && m_enabled_wrap_around && oldLine == 0)
+		{
+			return ((m_content->size() - 1) / m_max_columns) - m_max_rows + 1;
+		}
+
 		if (doUp)
 		{
-			if(oldLine == 0 && oldTopLeft == 0)
-			{
-				return m_enabled_wrap_around ?((m_content->size() - 1) / m_max_columns) - m_max_rows + 1 : 0;
-			}
-			else if(oldLine == 0 && oldTopLeft > 0)
-			{
-				return oldTopLeft - 1;
-			}
-
 			if ((oldLine > 0 && oldTopLeft > 0) || (newlinecalc > 0))
 			{
 				return oldTopLeft;
