@@ -32,10 +32,6 @@ if HAVE_COLORLCD240
 SUBDIRS += display240
 endif
 
-if HAVE_COLORLCD3
-SUBDIRS += display128dm
-endif
-
 if HAVE_COLORLCD390
 SUBDIRS += display390
 endif
