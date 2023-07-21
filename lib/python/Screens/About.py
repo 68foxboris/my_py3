@@ -9,16 +9,17 @@ from Components.NimManager import nimmanager
 from Components.About import about
 from Components.ScrollLabel import ScrollLabel
 from Components.Button import Button
-from Components.SystemInfo import SystemInfo
+from Components.SystemInfo import SystemInfo, BoxInfo, model, brand, displaymodel
 
 from Components.Label import Label
 from Components.ProgressBar import ProgressBar
 from Components.Console import Console
 from Components.Pixmap import MultiPixmap, Pixmap
 from Components.Network import iNetwork
-from Tools.Directories import SCOPE_PLUGINS, resolveFilename, isPluginInstalled
+from Tools.Directories import SCOPE_PLUGINS, resolveFilename, isPluginInstalled, fileExists, pathExists
 from Tools.StbHardware import getFPVersion
 from Tools.Geolocation import geolocation
+from Tools.StbHardware import getFPVersion, getBoxProc, getBoxProcType, getHWSerial, getBoxRCType
 from enigma import eTimer, eLabel, eConsoleAppContainer, getDesktop, eGetEnigmaDebugLvl
 
 from Components.GUIComponent import GUIComponent
@@ -26,7 +27,8 @@ from skin import applySkinFactor, parameters, parseScale
 
 from time import strftime
 
-import os
+from os import listdir, popen, remove
+from os.path import getmtime, isfile, join as pathjoin
 import glob
 
 API_GITHUB = 0
