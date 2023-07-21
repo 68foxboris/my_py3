@@ -5,7 +5,6 @@ from Components.config import config, ConfigSlider, ConfigYesNo
 from Components.Label import Label
 from Plugins.SystemPlugins.OSDPositionSetup.plugin import setPosition, setConfiguredPosition
 from enigma import quitMainloop, eTimer, getDesktop
-import os
 
 
 class OverscanWizard(Screen, ConfigListScreen):
@@ -28,7 +27,7 @@ class OverscanWizard(Screen, ConfigListScreen):
 			</screen>"""
 
 		Screen.__init__(self, session)
-		self.setTitle(_("Overscan wizard"))
+		self["title"] = Label(_("Overscan wizard"))
 		self["introduction"] = Label()
 
 		self["actions"] = ActionMap(["SetupActions", "ColorActions", "MenuActions"],
@@ -37,6 +36,8 @@ class OverscanWizard(Screen, ConfigListScreen):
 			"green": self.keyGo,
 			"red": self.keyCancel,
 			"ok": self.keyGo,
+			"left": self.keyLeft,
+			"right": self.keyRight
 		}, -2)
 
 		self.step = 1
