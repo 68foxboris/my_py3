@@ -1,8 +1,10 @@
-import os
-from threading import Thread, current_thread
+from os import remove
+from os.path import isfile
 from sys import _current_frames
-from traceback import extract_stack
+from threading import Thread, current_thread
 from time import sleep
+from traceback import extract_stack
+
 from Components.config import config
 
 
