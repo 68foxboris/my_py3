@@ -89,7 +89,7 @@ class PluginComponent:
 								keymapparser.readKeymap(keymap)
 							except Exception as exc:
 								print("[PluginComponent] keymap for plugin %s/%s failed to load: " % (c, pluginname), exc)
-								self.warnings.append((c + "/" + pluginname, str(exc)))
+								self.pluginWarnings.append((c + "/" + pluginname, str(exc)))
 
 		# build a diff between the old list of plugins and the new one
 		# internally, the "fnc" argument will be compared with __eq__
