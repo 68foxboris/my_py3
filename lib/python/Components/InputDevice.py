@@ -1,9 +1,20 @@
 from Components.config import config, ConfigSlider, ConfigSubsection, ConfigYesNo, ConfigText, ConfigInteger
 from Components.SystemInfo import SystemInfo
+from enigma import getBoxType
+from Components.SystemInfo import SystemInfo
+import errno
+import xml.etree.cElementTree
+from enigma import eRCInput
+from keyids import KEYIDS
+from Components.RcModel import rc_model
 from fcntl import ioctl
 import os
 import struct
 import platform
+from Tools.Directories import pathExists
+from boxbranding import getRCType
+
+model = getBoxType()
 
 # include/uapi/asm-generic/ioctl.h
 IOC_NRBITS = 8
