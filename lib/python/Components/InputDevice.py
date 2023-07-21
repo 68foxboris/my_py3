@@ -1,7 +1,6 @@
 from Components.config import config, ConfigSlider, ConfigSubsection, ConfigYesNo, ConfigText, ConfigInteger
 from Components.SystemInfo import SystemInfo
-from enigma import getBoxType
-from Components.SystemInfo import SystemInfo
+from enigma import getBoxType, getBoxBrand
 import errno
 import xml.etree.cElementTree
 from enigma import eRCInput
