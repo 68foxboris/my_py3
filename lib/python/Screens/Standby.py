@@ -9,7 +9,7 @@ from Components.config import config
 from Components.AVSwitch import AVSwitch
 from Components.Console import Console
 from Components.ImportChannels import ImportChannels
-from Components.SystemInfo import SystemInfo, model, brand, displaymodel
+from Components.SystemInfo import SystemInfo, BoxInfo, model, brand, displaymodel
 from Components.Sources.StreamService import StreamServiceList
 from Components.Task import job_manager
 from Tools.Directories import mediafilesInUse
@@ -18,6 +18,10 @@ from time import time, localtime
 from GlobalActions import globalActionMap
 from enigma import eDVBVolumecontrol, eTimer, eDVBLocalTimeHandler, eServiceReference, eStreamServer, quitMainloop, iRecordableService, eDBoxLCD
 from boxbranding import getMachineBrand, getMachineName, getBrandOEM, getMachineBuild
+
+model = BoxInfo.getItem("model")
+brand = BoxInfo.getItem("brand")
+LCDMiniTV = BoxInfo.getItem("LCDMiniTV")
 
 inStandby = None
 infoBarInstance = None
