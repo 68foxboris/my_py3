@@ -728,7 +728,7 @@ class AttributeParser:
 		self.scaleTuple = scale
 
 	def applyAll(self, attributes):
-		# attributes.sort(key=lambda x: {"pixmap": 1}.get(x[0], 0))  # For SVG pixmap scale required the size, so sort pixmap last.
+		attributes.sort(key=lambda x: {"pixmap": 1}.get(x[0], 0))  # For SVG pixmap scale required the size, so sort pixmap last.
 		for attribute, value in attributes:
 			self.applyOne(attribute, value)
 
@@ -835,11 +835,11 @@ class AttributeParser:
 
 	def halign(self, value):  # This legacy definition uses an inconsistent name, use 'horizontalAlignment' instead!
 		self.horizontalAlignment(value)
-		# attribDeprecationWarning("halign", "horizontalAlignment")
+		attribDeprecationWarning("halign", "horizontalAlignment")
 
 	def hAlign(self, value):  # This typo catcher definition uses an inconsistent name, use 'horizontalAlignment' instead!
 		self.horizontalAlignment(value)
-		# attribDeprecationWarning("hAlign", "horizontalAlignment")
+		attribDeprecationWarning("hAlign", "horizontalAlignment")
 
 	def horizontalAlignment(self, value):
 		self.guiObject.setHAlign(parseHorizontalAlignment(value))
@@ -972,7 +972,7 @@ class AttributeParser:
 
 	def seek_pointer(self, value):  # This legacy definition uses an inconsistent name, use 'seekPointer' instead!
 		self.seekPointer(value)
-		# attribDeprecationWarning("seek_pointer", "seekPointer")
+		attribDeprecationWarning("seek_pointer", "seekPointer")
 
 	def seekPointer(self, value):
 		(name, pos) = [x.strip() for x in value.split(":", 1)]
@@ -1039,11 +1039,11 @@ class AttributeParser:
 
 	def valign(self, value):  # This legacy definition uses an inconsistent name, use 'verticalAlignment' instead!
 		self.verticalAlignment(value)
-		# attribDeprecationWarning("valign", "verticalAlignment")
+		attribDeprecationWarning("valign", "verticalAlignment")
 
 	def vAlign(self, value):  # This typo catcher definition uses an inconsistent name, use 'verticalAlignment' instead!
 		self.verticalAlignment(value)
-		# attribDeprecationWarning("vAlign", "verticalAlignment")
+		attribDeprecationWarning("vAlign", "verticalAlignment")
 
 	def valueFont(self, value):
 		self.guiObject.setValueFont(parseFont(value, self.scaleTuple))
@@ -1082,6 +1082,64 @@ def loadSingleSkinData(desktop, screenID, domSkin, pathSkin, scope=SCOPE_GUISKIN
 				resolutions[scrnID] = (xres, yres, bpp)
 				if bpp != 32:
 					pass  # Load palette (Not yet implemented!)
+				if yres >= 1080:
+					parameters["AboutHddSplit"] = 1
+					parameters["AutotimerListChannels"] = (2, 60, 4, 32)
+					parameters["AutotimerListDays"] = (1, 40, 5, 25)
+					parameters["AutotimerListHasTimespan"] = (154, 4, 150, 25)
+					parameters["AutotimerListIcon"] = (3, -1, 36, 36)
+					parameters["AutotimerListRectypeicon"] = (39, 4, 30, 30)
+					parameters["AutotimerListTimerName"] = (76, 4, 26, 32)
+					parameters["AutotimerListTimespan"] = (2, 40, 5, 25)
+					parameters["ChoicelistDash"] = (0, 3, 1000, 30)
+					parameters["ChoicelistIcon"] = (7, 0, 52, 38)
+					parameters["ChoicelistName"] = (68, 3, 1000, 32)
+					parameters["ChoicelistNameSingle"] = (7, 3, 1000, 32)
+					parameters["ConfigListSeperator"] = 500
+					parameters["DreamexplorerIcon"] = (15, 4, 30, 30)
+					parameters["DreamexplorerName"] = (62, 0, 1200, 38)
+					parameters["FileListIcon"] = (7, 4, 52, 37)
+					parameters["FileListMultiIcon"] = (45, 4, 30, 30)
+					parameters["FileListMultiLock"] = (2, 0, 36, 36)
+					parameters["FileListMultiName"] = (90, 3, 1000, 32)
+					parameters["FileListName"] = (68, 4, 1000, 34)
+					parameters["HelpMenuListExtHlp0"] = (0, 0, 900, 39)
+					parameters["HelpMenuListExtHlp1"] = (0, 42, 900, 30)
+					parameters["HelpMenuListHlp"] = (0, 0, 900, 42)
+					parameters["PartnerBoxBouquetListName"] = (0, 0, 45)
+					parameters["PartnerBoxChannelListName"] = (0, 0, 45)
+					parameters["PartnerBoxChannelListTime"] = (0, 78, 225, 30)
+					parameters["PartnerBoxChannelListTitle"] = (0, 42, 30)
+					parameters["PartnerBoxE1TimerState"] = (255, 78, 255, 30)
+					parameters["PartnerBoxE1TimerTime"] = (0, 78, 255, 30)
+					parameters["PartnerBoxE2TimerIcon"] = (1050, 8, 20, 20)
+					parameters["PartnerBoxE2TimerIconRepeat"] = (1050, 38, 20, 20)
+					parameters["PartnerBoxE2TimerState"] = (225, 78, 225, 30)
+					parameters["PartnerBoxE2TimerTime"] = (0, 78, 225, 30)
+					parameters["PartnerBoxEntryListIP"] = (180, 2, 225, 38)
+					parameters["PartnerBoxEntryListName"] = (8, 2, 225, 38)
+					parameters["PartnerBoxEntryListPort"] = (405, 2, 150, 38)
+					parameters["PartnerBoxEntryListType"] = (615, 2, 150, 38)
+					parameters["PartnerBoxTimerName"] = (0, 42, 30)
+					parameters["PartnerBoxTimerServicename"] = (0, 0, 45)
+					parameters["PicturePlayerThumb"] = (30, 285, 45, 300, 30, 25)
+					parameters["PlayListIcon"] = (7, 7, 24, 24)
+					parameters["PlayListName"] = (38, 2, 1000, 34)
+					parameters["PluginBrowserDescr"] = (180, 42, 25)
+					parameters["PluginBrowserDownloadDescr"] = (120, 42, 25)
+					parameters["PluginBrowserDownloadIcon"] = (15, 0, 90, 76)
+					parameters["PluginBrowserDownloadName"] = (120, 8, 38)
+					parameters["PluginBrowserIcon"] = (15, 8, 150, 60)
+					parameters["PluginBrowserName"] = (180, 8, 38)
+					parameters["SHOUTcastListItem"] = (30, 27, 35, 96, 35, 33, 60, 32)
+					parameters["SelectionListDescr"] = (45, 6, 1000, 45)
+					parameters["SelectionListLock"] = (0, 2, 36, 36)
+					parameters["ServiceInfoLeft"] = (0, 0, 450, 45)
+					parameters["ServiceInfoRight"] = (450, 0, 1000, 45)
+					parameters["VirtualKeyBoard"] = (68, 68)
+					parameters["VirtualKeyBoardAlignment"] = (0, 0)
+					parameters["VirtualKeyBoardPadding"] = (7, 7)
+					parameters["VirtualKeyBoardShiftColors"] = (0x00ffffff, 0x00ffffff, 0x0000ffff, 0x00ff00ff)
 	for tag in domSkin.findall("include"):
 		filename = tag.attrib.get("filename")
 		if filename:
