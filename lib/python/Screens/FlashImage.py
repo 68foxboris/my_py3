@@ -11,7 +11,7 @@ from Components.Console import Console
 from Components.Label import Label
 from Components.Pixmap import Pixmap
 from Components.ProgressBar import ProgressBar
-from Components.SystemInfo import SystemInfo, MODEL
+from Components.SystemInfo import SystemInfo
 from Tools.BoundFunction import boundFunction
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS, fileExists, pathExists, fileHas
 from Tools.Downloader import downloadWithProgress
@@ -27,7 +27,10 @@ import shutil
 import tempfile
 import struct
 
-from enigma import eEPGCache, eEnv
+from enigma import eEPGCache, eEnv, getBoxType
+
+model = getBoxType()
+
 
 def checkimagefiles(files):
 	return len([x for x in files if 'kernel' in x and '.bin' in x or x in ('uImage', 'rootfs.bin', 'root_cfe_auto.bin', 'root_cfe_auto.jffs2', 'oe_rootfs.bin', 'e2jffs2.img', 'rootfs.tar.bz2', 'rootfs.ubi')]) == 2
@@ -41,6 +44,7 @@ class SelectImage(Screen):
 		self.imagesList = {}
 		self.setIndex = 0
 		self.expanded = []
+		self.model = getBoxType()
 		self.selectedImage = ["OpenPLi", {"url": "https://downloads.openpli.org/json/%s" % self.model, "model": self.model}]
 		self.models = [self.model]
 		self.setTitle(_("Select image"))
@@ -240,11 +244,10 @@ class SelectImage(Screen):
 
 
 class FlashImage(Screen):
-	skin = """<screen position="center,center" size="640,200" flags="wfNoBorder" backgroundColor="#54242424">
+	skin = """<screen position="center,center" size="640,180" flags="wfNoBorder" backgroundColor="#54242424">
 		<widget name="header" position="5,10" size="e-10,50" font="Regular;40" backgroundColor="#54242424"/>
 		<widget name="info" position="5,60" size="e-10,130" font="Regular;24" backgroundColor="#54242424"/>
-		<widget name="progress" position="5,145" size="e-10,24" backgroundColor="#54242424"/>
-		<widget name="progress_counter" position="5,175" size="e-10,24" font="Regular;24" backgroundColor="#54242424"/>
+		<widget name="progress" position="5,e-39" size="e-10,24" backgroundColor="#54242424"/>
 	</screen>"""
 
 	BACKUP_SCRIPT = resolveFilename(SCOPE_PLUGINS, "Extensions/AutoBackup/settings-backup.sh")
@@ -605,6 +608,7 @@ class MultibootSelection(SelectImage):
 				else:
 					shutil.copyfile(startupfile, os.path.join(self.tmp_dir, "STARTUP"))
 			else:
+				model = getBoxType()
 				if slot[1] == 1:
 					startupFileContents = "boot emmcflash0.kernel%s 'root=/dev/mmcblk0p%s rw rootwait %s_4.boxmode=1'\n" % (slot[0], slot[0] * 2 + 1, model)
 				else:
@@ -661,6 +665,7 @@ class KexecInit(Screen):
 
 	def RootInitEnd(self, *args, **kwargs):
 		from Screens.Standby import TryQuitMainloop
+		model = getBoxType()
 		for usbslot in range(1, 4):
 			if pathExists("/media/hdd/%s/linuxrootfs%s" % (model, usbslot)):
 				Console().ePopen("cp -R /media/hdd/%s/linuxrootfs%s . /" % (model, usbslot))
