@@ -544,8 +544,6 @@ int eDVBRecordFileThread::asyncWrite(int len)
 
 	if(!getProtocol())
 		m_ts_parser.parseData(m_current_offset, m_buffer, len);
-	if (m_ts_parser.broken())
-		sendEvent(evtRetune);
 
 #ifdef SHOW_WRITE_TIME
 	gettimeofday(&now, NULL);
