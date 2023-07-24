@@ -41,6 +41,7 @@ is usually caused by not marking PSignals as immutable.
 #include <lib/base/eenv.h>
 #include <lib/base/eerror.h>
 #include <lib/base/message.h>
+#include <lib/base/modelinformation.h>
 #include <lib/base/e2avahi.h>
 #include <lib/driver/rc.h>
 #include <lib/driver/rcinput_swig.h>
@@ -98,6 +99,7 @@ is usually caused by not marking PSignals as immutable.
 #include <lib/dvb/cablescan.h>
 #include <lib/dvb/encoder.h>
 #include <lib/dvb/streamserver.h>
+#include <lib/dvb/rtspstreamserver.h>
 #include <lib/components/scan.h>
 #include <lib/components/file_eraser.h>
 #include <lib/components/tuxtxtapp.h>
@@ -161,6 +163,7 @@ typedef long time_t;
 
 %immutable eSocketNotifier::activated;
 %include <lib/base/ebase.h>
+%include <lib/base/modelinformation.h>
 %include <lib/base/smartptr.h>
 %include <lib/service/event.h>
 %include <lib/service/iservice.h>
@@ -267,6 +270,7 @@ typedef long time_t;
 %include <lib/gdi/picload.h>
 %include <lib/dvb/fcc.h>
 %include <lib/dvb/streamserver.h>
+%include <lib/dvb/rtspstreamserver.h>
 /**************  eptr  **************/
 
 /**************  signals  **************/

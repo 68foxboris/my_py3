@@ -13,6 +13,8 @@
 #include <lib/base/nconfig.h>
 #include <lib/gdi/gmaindc.h>
 #include <asm/ptrace.h>
+#include <lib/base/modelinformation.h>
+
 #include "version_info.h"
 
 /************************************************/
@@ -230,10 +232,37 @@ void bsodFatal(const char *component)
 			enigma2_branch,
 			enigma2_rev,
 			component);
+		eModelInformation &modelinformation = eModelInformation::getInstance();
 
 		std::ifstream in(eEnv::resolve("${libdir}/enigma.info").c_str());
 		const std::list<std::string> enigmainfovalues {
-			"model="
+			"architecture",
+			"binutils",
+			"brand",
+			"busybox",
+			"developername",
+			"distro",
+			"driverdate",
+			"feedsurl",
+			"ffmpeg",
+			"friendlyfamily",
+			"gcc",
+			"glibc",
+			"gstreamer",
+			"imagetype",
+			"imglanguage",
+			"imgrevision",
+			"imgversion",
+			"kernel",
+			"model",
+			"oe",
+			"openssl",
+			"platform",
+			"python",
+			"rcidnum",
+			"rcname",
+			"rctype",
+			"socfamily"
 		};
 
 		if (in.good()) {
