@@ -327,10 +327,10 @@ int eEncoder::allocateHDMIEncoder(const std::string &serviceref, int &buffersize
 	CFile::writeInt("/proc/stb/encoder/0/aspectratio", hdmi_encoding_aspect_ratio);
 
 	snprintf(filename, sizeof(filename), "/proc/stb/encoder/%d/%s", 0, vcodec_node);
-	CFile::write(filename, hdmi_encoding_vcodec);
+	CFile::write(filename, hdmi_encoding_vcodec.c_str());
 
 	snprintf(filename, sizeof(filename), "/proc/stb/encoder/%d/%s", 0, acodec_node);
-	CFile::write(filename, hdmi_encoding_acodec);
+	CFile::write(filename, hdmi_encoding_acodec.c_str());
 
 	snprintf(filename, sizeof(filename), "/proc/stb/encoder/%d/apply", 0);
 	CFile::writeInt(filename, 1);
