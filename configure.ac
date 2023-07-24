@@ -602,6 +602,14 @@ if test "$BOXTYPE" == "vuzero" -o "$BOXTYPE" == "vuuno" -o "$BOXTYPE" == "vuulti
 	AC_DEFINE(FORCE_AUTO_INV, 1,[force Inversion auto for vuplus mipsel boxes])
 fi
 
+if test "$BOXTYPE" == "dm7080" -o "$BOXTYPE" == "dm820" -o "$BOXTYPE" == "dm900" -o "$BOXTYPE" == "dm920"; then
+	AC_DEFINE(HAVE_HDMIIN_DM, 1,[has hdmi in dm])
+fi
+
+if test "$BOXTYPE" == "dm900" -o "$BOXTYPE" == "dm920"; then
+	AC_DEFINE(LCD_DM900_Y_OFFSET, 4,[define LCD Y offset for dm900 and dm920])
+fi
+
 if test "$BOXTYPE" == "sf4008" -o "$BOXTYPE" == "beyonwizu4"; then
 	AC_DEFINE(LCD_SCROLL_HEX, 1,[define LCD scroll values in hex])
 fi

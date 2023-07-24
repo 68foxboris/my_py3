@@ -108,11 +108,27 @@ class StandbyScreen(Screen):
 		if hasattr(self.session, "pip"):
 			del self.session.pip
 		self.session.pipshown = False
+		#set input to vcr scart
+		self.avswitch.setInput("off")
 
-		if SystemInfo["ScartSwitch"]:
-			self.avswitch.setInput("SCART")
-		else:
-			self.avswitch.setInput("AUX")
+		if isfile("/proc/stb/hdmi/output"):
+			try:
+				print("[Standby] Write to /proc/stb/hdmi/output")
+				open("/proc/stb/hdmi/output", "w").write("off")
+			except:
+				print("[Standby] Write to /proc/stb/hdmi/output failed.")
+
+		if AmlogicFamily:
+			try:
+				print("[Standby] Write to /sys/class/leds/led-sys/brightness")
+				open("/sys/class/leds/led-sys/brightness", "w").write("0")
+			except:
+				print("[Standby] Write to /sys/class/leds/led-sys/brightness failed.")
+			try:
+				print("[Standby] Write to /sys/class/cec/cmd")
+				open("/sys/class/cec/cmd", "w").write("0f 36")
+			except:
+				print("[Standby] Write to /sys/class/cec/cmd failed.")
 
 		gotoShutdownTime = int(config.usage.standby_to_shutdown_timer.value)
 		if gotoShutdownTime:
@@ -150,7 +166,7 @@ class StandbyScreen(Screen):
 		globalActionMap.setEnabled(True)
 		if RecordTimer.RecordTimerEntry.receiveRecordEvents:
 			RecordTimer.RecordTimerEntry.stopTryQuitMainloop()
-		self.avswitch.setInput("ENCODER")
+		self.avswitch.setInput("encoder")
 		self.leaveMute()
 		if os.path.exists("/usr/script/standby_leave.sh"):
 			Console().ePopen("/usr/script/standby_leave.sh")
