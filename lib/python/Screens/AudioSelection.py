@@ -227,6 +227,22 @@ class AudioSelection(ConfigListScreen, Screen, HelpableScreen):
 				self.settings.downmix_dts.addNotifier(self.changeDTSDownmix, initial_call=False)
 				conflist.append((_("DTS downmix"), self.settings.downmix_dts, None))
 
+			if BoxInfo.getItem("HDMIAudioSource"):
+				if BoxInfo.getItem("AmlogicFamily"):
+					choice_list = [
+						("0", _("PCM")),
+						("1", _("SPDIF")),
+						("2", _("Bluetooth"))
+					]
+				else:
+					choice_list = [
+						(pChoice("pcm")),
+						(pChoice("spdif"))
+					]
+				self.settings.audio_source = ConfigSelection(choices=choice_list, default=config.av.hdmi_audio_source.value)
+				self.settings.audio_source.addNotifier(self.changeAudioSource, initial_call=False)
+				conflist.append(getConfigListEntry(_("Audio Source"), self.settings.audio_source, None))
+
 			if SystemInfo["CanDTSHD"]:
 				choice_list = [
 					("downmix", _("Downmix")),
@@ -497,6 +513,10 @@ class AudioSelection(ConfigListScreen, Screen, HelpableScreen):
 	def changeDTSDownmix(self, downmix):
 		config.av.downmix_dts.setValue(downmix.value)
 		config.av.downmix_dts.save()
+
+	def changeAudioSource(self, audiosource):
+		config.av.hdmi_audio_source.setValue(audiosource.value)
+		config.av.hdmi_audio_source.save()
 
 	def changeDTSHD(self, downmix):
 		config.av.dtshd.setValue(downmix.value)
