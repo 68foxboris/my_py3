@@ -425,6 +425,7 @@ public:
 	void forceUpdateRotorPos(int slot, int orbital_position); // called from the frontend's
 
 	friend class eFBCTunerManager;
+	friend class eRTSPStreamClient;
 };
 
 #endif

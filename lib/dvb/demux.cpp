@@ -415,8 +415,8 @@ eDVBRecordFileThread::eDVBRecordFileThread(int packetsize, int bufferCount, int 
 	 * completely, the default declaration).
 	 */
 	eFilePushThreadRecorder(
-		/*buffer*/ (unsigned char*) ::mmap(NULL, (buffersize > 0) ? (buffersize * bufferCount) : (bufferCount * packetsize * 1024), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, /*ignored*/-1, 0),
-		/*buffersize*/ (buffersize > 0) ? buffersize : (packetsize * 1024)),
+		/* buffer */ (unsigned char*) ::mmap(NULL, bufferCount * packetsize * 1050, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, /*ignored*/-1, 0),
+		/*buffersize*/ packetsize * 1050),	// the buffer should be higher than the hardware buffer size, accounts for RTSP header
 	 m_ts_parser(packetsize),
 	 m_current_offset(0),
 	 m_fd_dest(-1),
@@ -542,7 +542,10 @@ int eDVBRecordFileThread::asyncWrite(int len)
 	gettimeofday(&starttime, NULL);
 #endif
 
-	m_ts_parser.parseData(m_current_offset, m_buffer, len);
+	if(!getProtocol())
+		m_ts_parser.parseData(m_current_offset, m_buffer, len);
+	if (m_ts_parser.broken())
+		sendEvent(evtRetune);
 
 #ifdef SHOW_WRITE_TIME
 	gettimeofday(&now, NULL);
