@@ -5,7 +5,7 @@ from os.path import exists, isfile, join as pathjoin
 from re import findall
 
 from boxbranding import getMachineName
-from enigma import Misc_Options, eDVBCIInterfaces, eDVBResourceManager, eGetEnigmaDebugLvl
+from enigma import Misc_Options, eDVBCIInterfaces, eDVBResourceManager, eGetEnigmaDebugLvl, getPlatform
 from Tools.Directories import SCOPE_PLUGINS, SCOPE_LIBDIR, scopeLCDSkin, SCOPE_SKIN, fileCheck, fileReadLine, fileReadLines, resolveFilename, fileExists, fileHas, fileReadLine, pathExists
 
 MODULE_NAME = __name__.split(".")[-1]
