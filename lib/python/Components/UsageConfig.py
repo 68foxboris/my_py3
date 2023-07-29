@@ -6,7 +6,6 @@ from Tools.Directories import SCOPE_HDD, SCOPE_TIMESHIFT, defaultRecordingLocati
 from enigma import setTunerTypePriorityOrder, setPreferredTuner, setSpinnerOnOff, setEnableTtCachingOnOff, eEnv, eDVBDB, Misc_Options, eBackgroundFileEraser, eServiceEvent, eDVBLocalTimeHandler, eEPGCache, getBoxType
 from Components.About import GetIPsFromNetworkInterfaces
 from Components.NimManager import nimmanager
-from Components.Renderer.FrontpanelLed import ledPatterns, PATTERN_ON, PATTERN_OFF, PATTERN_BLINK
 from Components.ServiceList import refreshServiceList
 from Components.SystemInfo import SystemInfo, MODEL
 from os.path import exists, islink, join as pathjoin, normpath
@@ -520,34 +519,6 @@ def InitUsageConfig():
 		("5", _("DVB-T/-S/-C")),
 		("127", _("No priority"))])
 
-	config.usage.frontled_color = ConfigSelection(default="1", choices=[
-		("0", _("Off")),
-		("1", _("Blue")),
-		("2", _("Red")),
-		("3", _("Blinking blue")),
-		("4", _("Blinking red"))
-	])
-	config.usage.frontledrec_color = ConfigSelection(default="2", choices=[
-		("0", _("Off")),
-		("1", _("Blue")),
-		("2", _("Red")),
-		("3", _("Blinking blue")),
-		("4", _("Blinking red"))
-	])
-	config.usage.frontledstdby_color = ConfigSelection(default="2", choices=[
-		("0", _("Off")),
-		("1", _("Blue")),
-		("2", _("Red")),
-		("3", _("Blinking violet")),
-		("4", _("Blinking red"))
-	])
-	config.usage.frontledrecstdby_color = ConfigSelection(default="4", choices=[
-		("0", _("Off")),
-		("1", _("Blue")),
-		("2", _("Red")),
-		("3", _("Blinking blue")),
-		("4", _("Blinking red"))
-	])
 
 	def remote_fallback_changed(configElement):
 		if configElement.value:
@@ -622,26 +593,22 @@ def InitUsageConfig():
 			("Time", _("Time")),
 			("Nothing", _("Nothing"))
 		])
-	else:
-		config.usage.blinking_display_clock_during_recording = ConfigYesNo(default=False)
-
-	# blink for displaytext not in 7segment
-	if SystemInfo["textlcd"]:
-		config.usage.blinking_rec_symbol_during_recording = ConfigSelection(default="Channel", choices=[
-			("Rec", _("REC symbol")),
-			("RecBlink", _("Blinking REC symbol")),
-			("Channel", _("Channel name"))
-		])
-	if SystemInfo["7segment"]:
 		config.usage.blinking_rec_symbol_during_recording = ConfigSelection(default="Rec", choices=[
 			("Rec", _("REC")),
 			("RecBlink", _("Blinking REC")),
 			("Time", _("Time"))
 		])
 	else:
+		config.usage.blinking_display_clock_during_recording = ConfigYesNo(default=False)
 		config.usage.blinking_rec_symbol_during_recording = ConfigYesNo(default=True)
 
-	# show/hide time in display in standby
+	if SystemInfo["textlcd"]:
+		config.usage.blinking_rec_symbol_during_recording = ConfigSelection(default="Channel", choices=[
+			("Rec", _("REC symbol")),
+			("RecBlink", _("Blinking REC symbol")),
+			("Channel", _("Channel name"))
+		])
+
 	config.usage.show_in_standby = ConfigSelection(default="time", choices=[
 		("time", _("Time")),
 		("nothing", _("Nothing"))
@@ -1112,17 +1079,6 @@ def InitUsageConfig():
 			open(SystemInfo["FanPWM"], "w").write(hex(configElement.value)[2:])
 		config.usage.fanspeed = ConfigSlider(default=127, increment=8, limits=(0, 255))
 		config.usage.fanspeed.addNotifier(fanSpeedChanged)
-
-	if SystemInfo["PowerLED"]:
-		def powerLEDChanged(configElement):
-			if "fp" in SystemInfo["PowerLED"]:
-				open(SystemInfo["PowerLED"], "w").write(configElement.value and "1" or "0")
-				patterns = [PATTERN_ON, PATTERN_ON, PATTERN_OFF, PATTERN_ON] if configElement.value else [PATTERN_OFF, PATTERN_OFF, PATTERN_OFF, PATTERN_OFF]
-				ledPatterns.setLedPatterns(1, patterns)
-			else:
-				open(SystemInfo["PowerLED"], "w").write(configElement.value and "on" or "off")
-		config.usage.powerLED = ConfigYesNo(default=True)
-		config.usage.powerLED.addNotifier(powerLEDChanged)
 
 	if SystemInfo["WakeOnLAN"]:
 		f = open(SystemInfo["WakeOnLAN"], "r")
