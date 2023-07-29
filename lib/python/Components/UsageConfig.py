@@ -7,7 +7,7 @@ from enigma import setTunerTypePriorityOrder, setPreferredTuner, setSpinnerOnOff
 from Components.About import GetIPsFromNetworkInterfaces
 from Components.NimManager import nimmanager
 from Components.ServiceList import refreshServiceList
-from Components.SystemInfo import SystemInfo, MODEL
+from Components.SystemInfo import SystemInfo, BoxInfo, MODEL
 from os.path import exists, islink, join as pathjoin, normpath
 import os
 import skin, locale
@@ -18,6 +18,8 @@ from keyids import KEYIDS
 originalAudioTracks = "orj dos ory org esl qaa und mis mul ORY ORJ Audio_ORJ oth"
 visuallyImpairedCommentary = "NAR qad"
 
+model = BoxInfo.getItem("model")
+displaytype = BoxInfo.getItem("displaytype")
 
 def InitUsageConfig():
 	config.usage = ConfigSubsection()
@@ -586,28 +588,30 @@ def InitUsageConfig():
 	config.usage.show_event_progress_in_servicelist.addNotifier(refreshServiceList)
 	config.usage.show_channel_numbers_in_servicelist.addNotifier(refreshServiceList)
 
-	if SystemInfo["7segment"]:
+	if displaytype == "7segment" or "7seg" in displaytype:
 		config.usage.blinking_display_clock_during_recording = ConfigSelection(default="Rec", choices=[
 			("Rec", _("REC")),
 			("RecBlink", _("Blinking REC")),
 			("Time", _("Time")),
 			("Nothing", _("Nothing"))
 		])
+	else:
+		config.usage.blinking_display_clock_during_recording = ConfigYesNo(default=False)
+
+	if displaytype == "textlcd" or "text" in displaytype:
+		config.usage.blinking_rec_symbol_during_recording = ConfigSelection(default="Channel", choices=[
+			("Rec", _("REC symbol")),
+			("RecBlink", _("Blinking REC symbol")),
+			("Channel", _("Channel name"))
+		])
+	if displaytype == "7segment" or "7seg" in displaytype:
 		config.usage.blinking_rec_symbol_during_recording = ConfigSelection(default="Rec", choices=[
 			("Rec", _("REC")),
 			("RecBlink", _("Blinking REC")),
 			("Time", _("Time"))
 		])
 	else:
-		config.usage.blinking_display_clock_during_recording = ConfigYesNo(default=False)
 		config.usage.blinking_rec_symbol_during_recording = ConfigYesNo(default=True)
-
-	if SystemInfo["textlcd"]:
-		config.usage.blinking_rec_symbol_during_recording = ConfigSelection(default="Channel", choices=[
-			("Rec", _("REC symbol")),
-			("RecBlink", _("Blinking REC symbol")),
-			("Channel", _("Channel name"))
-		])
 
 	config.usage.show_in_standby = ConfigSelection(default="time", choices=[
 		("time", _("Time")),
