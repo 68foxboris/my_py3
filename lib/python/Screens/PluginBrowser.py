@@ -16,7 +16,7 @@ from Components.Language import language
 from Components.ServiceList import refreshServiceList
 from Components.Harddisk import harddiskmanager
 from Components.Sources.StaticText import StaticText
-from Components.SystemInfo import SystemInfo, BoxInfo, hassoftcaminstalled
+from Components.SystemInfo import SystemInfo, hassoftcaminstalled
 from Components import Opkg
 from Components.Opkg import opkgAddDestination, opkgExtraDestinations, opkgDestinations, OpkgComponent
 from Components.Pixmap import Pixmap
@@ -494,7 +494,7 @@ class PluginDownloadBrowser(Screen):
 						if partition.filesystem(mounts) in supported_filesystems:
 							candidates.append((partition.description, partition.mountpoint))
 					if candidates:
- 						from Components.Renderer import Picon
+						from Components.Renderer import Picon
 						self.postInstallCall = Picon.initPiconPaths
 						self.session.openWithCallback(self.installDestinationCallback, ChoiceBox, title=_("Install picons on"), list=candidates)
 					return
