@@ -493,7 +493,7 @@ class PluginDownloadBrowser(Screen):
 					for partition in harddiskmanager.getMountedPartitions(False, mounts):
 						if partition.filesystem(mounts) in supported_filesystems:
 							candidates.append((partition.description, partition.mountpoint))
-					if candidates and BoxInfo.getItem("LCDSupport"):
+					if candidates:
  						from Components.Renderer import Picon
 						self.postInstallCall = Picon.initPiconPaths
 						self.session.openWithCallback(self.installDestinationCallback, ChoiceBox, title=_("Install picons on"), list=candidates)
