@@ -10,7 +10,7 @@ from Components.config import config
 from Components.AVSwitch import AVSwitch
 from Components.Console import Console
 from Components.ImportChannels import ImportChannels
-from Components.SystemInfo import SystemInfo, BoxInfo, MODEL
+from Components.SystemInfo import SystemInfo, BoxInfo, MODEL, BRAND
 from Components.Sources.StreamService import StreamServiceList
 from Components.Task import job_manager
 from Tools.Directories import mediaFilesInUse
