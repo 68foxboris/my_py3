@@ -80,7 +80,7 @@ class IconCheckPoller:
 			for dev in devices:
 				if dev.deviceClass != 9 and dev.deviceClass != 2 and dev.idVendor != 3034 and dev.idVendor > 0:
 					USBState = 1
-		if exists("/proc/stb/lcd/symbol_usb"):
+		if isfile("/proc/stb/lcd/symbol_usb"):
 			fileWriteLine("/proc/stb/lcd/symbol_usb", USBState)
 		self.timer.startLongTimer(30)
 
