@@ -782,8 +782,9 @@ class InfoBarChannelSelection:
 	channelChange actions which open the channelSelection dialog """
 
 	def __init__(self):
-		#instantiate forever
+		# instantiate forever
 		self.servicelist = self.session.instantiateDialog(ChannelSelection)
+		self.onClose.append(self.__onClose)
 
 		if config.misc.initialchannelselection.value:
 			self.onShown.append(self.firstRun)
@@ -799,6 +800,12 @@ class InfoBarChannelSelection:
 			"keyChannelDown": (self.keyChannelDownCheck, self.getKeyChannelDownHelptext),
 			"openSatellitesList": (self.openSatellitesList, _("Open satellites list")),
 		}, prio=0, description=_("Service Selection Actions"))
+		self.onClose.append(self.__onClose)
+
+	def __onClose(self):
+		if self.servicelist:
+			self.servicelist.doClose()
+			self.servicelist = None
 
 	def showTvChannelList(self, zap=False):
 		self.servicelist.setModeTv()
@@ -1294,11 +1301,14 @@ class InfoBarEPG:
 		plugin(session=self.session, servicelist=self.servicelist)
 
 	def showEventInfoPlugins(self):
-		pluginlist = self.getEPGPluginList()
-		if pluginlist:
-			self.session.openWithCallback(self.EventInfoPluginChosen, ChoiceBox, title=_("Please choose an extension..."), list=pluginlist, skin_name="EPGExtensionsList", reorderConfig="eventinfo_order", windowTitle=_("Events info menu"))
+		if BRAND not in ("xtrend", "odin", "INI", "dags", "GigaBlue", "xp"):
+			pluginlist = self.getEPGPluginList()
+			if pluginlist:
+				self.session.openWithCallback(self.EventInfoPluginChosen, OrderedChoiceBox, text=_("Please choose an extension..."), list=pluginlist, order="eventInfoOrder", skinName="EPGExtensionsList", windowTitle=_("Events Info Menu"))
+			else:
+				self.openSingleServiceEPG()
 		else:
-			self.openSingleServiceEPG()
+			self.openEventView()
 
 	def EventInfoPluginChosen(self, answer):
 		if answer is not None:
@@ -2101,7 +2111,7 @@ class InfoBarTimeshift:
 			self.setSeekState(self.SEEK_STATE_PAUSE)
 			seekable = self.getSeek()
 			if seekable is not None:
-				seekable.seekTo(-90000) # seek approx. 1 sec before end
+				seekable.seekTo(-90000)  # seek approx. 1 sec before end
 			self.timeshift_was_activated = True
 		if back:
 			self.ts_rewind_timer.start(200, 1)
@@ -2130,7 +2140,7 @@ class InfoBarTimeshift:
 		elif config.recording.filename_composition.value == "long":
 			filename += " - " + info["name"] + " - " + info["description"]
 		else:
-			filename += " - " + info["name"] # standard
+			filename += " - " + info["name"]  # standard
 
 		if config.recording.ascii_filenames.value:
 			filename = legacyEncode(filename)
@@ -2141,7 +2151,7 @@ class InfoBarTimeshift:
 	# same as activateTimeshiftEnd, but pauses afterwards.
 	def activateTimeshiftEndAndPause(self):
 		print("[InfoBarGenerics] activateTimeshiftEndAndPause")
-		#state = self.seekstate
+		# state = self.seekstate
 		self.activateTimeshiftEnd(False)
 
 	def callServiceStarted(self):
@@ -2278,8 +2288,8 @@ class InfoBarExtensions:
 		self.addExtension((lambda: _("Softcam Setup"), self.openSoftcamSetup, lambda: config.misc.softcam_setup.extension_menu.value and SystemInfo["HasSoftcamInstalled"]), "1")
 		self.addExtension((lambda: _("Manually import from fallback tuner"), self.importChannels, lambda: config.usage.remote_fallback_extension_menu.value and config.usage.remote_fallback_import.value))
 		self["InstantExtensionsActions"] = HelpableActionMap(self, ["InfobarExtensions"], {
-				"extensions": (self.showExtensionSelection, _("Show extensions...")),
-		},prio=1, description=_("Extension Actions"))  # Lower priority.
+			"extensions": (self.showExtensionSelection, _("Show extensions")),
+		}, prio=1, description=_("Extension Actions"))  # Lower priority.
 		self.addExtension(extension=self.getOScamInfo, type=InfoBarExtensions.EXTENSION_LIST)
 		self.addExtension(extension=self.getLogManager, type=InfoBarExtensions.EXTENSION_LIST)
 
@@ -2388,7 +2398,7 @@ class InfoBarPlugins:
 			args = inspect.getfullargspec(p.fnc)[0]
 			if len(args) == 1 or len(args) == 2 and isinstance(self, InfoBarChannelSelection):
 				l.append(((boundFunction(self.getPluginName, p.name), boundFunction(self.runPlugin, p), lambda: True), None, p.name))
-		l.sort(key=lambda e: e[2]) # sort by name
+		l.sort(key=lambda e: e[2])  # sort by name
 		return l
 
 	def runPlugin(self, plugin):
@@ -2662,7 +2672,7 @@ class InfoBarInstantRecord:
 
 	def startInstantRecording(self, limitEvent=""):
 		begin = int(time())
-		end = begin + 3600  # 1h (dummy)
+		end = begin + 3600		# dummy
 		name = _("Instant record")
 		info = {}
 		message = duration_message = ""
@@ -3113,7 +3123,7 @@ class InfoBarRedButton:
 		if info and info.getInfoString(iServiceInformation.sHBBTVUrl) != "":
 			for x in self.onHBBTVActivation:
 				x()
-		elif False: # TODO: other red button services
+		elif False:  # TODO: other red button services
 			for x in self.onRedButtonActivation:
 				x()
 
@@ -3431,10 +3441,10 @@ class InfoBarCueSheetSupport:
 			# only resume if at least 10 seconds ahead, or <10 seconds before the end.
 			seekable = self.__getSeekable()
 			if seekable is None:
-				return # Should not happen?
+				return  # Should not happen?
 			length = seekable.getLength()
 			if length[0]:
-				length = (-1, 0) #  Set length 0 if error in getLength()
+				length = (-1, 0)  #  Set length 0 if error in getLength()
 			print("[InfoBarGenerics] seekable.getLength() returns:", length)
 			if (last > 900000) and (not length[1] or last < length[1] - 900000):
 				self.resume_point = last
@@ -3805,7 +3815,7 @@ class InfoBarServiceErrorPopupSupport:
 				eDVBServicePMTHandler.eventSOF: None,
 				eDVBServicePMTHandler.eventEOF: None,
 				eDVBServicePMTHandler.eventMisconfiguration: _("Service unavailable!\nCheck tuner configuration!"),
-			}.get(error) #this returns None when the key not exist in the dict
+			}.get(error)  # this returns None when the key not exist in the dict
 
 			if error and not config.usage.hide_zap_errors.value:
 				self.closeNotificationInstantiateDialog()
@@ -3837,7 +3847,7 @@ class InfoBarPowersaver:
 	def inactivityTimeout(self):
 		if config.usage.inactivity_timer_blocktime.value:
 			curtime = localtime(time())
-			if curtime.tm_year > 1970: #check if the current time is valid
+			if curtime.tm_year > 1970:  # check if the current time is valid
 				duration = blocktime = extra_time = False
 				if config.usage.inactivity_timer_blocktime_by_weekdays.value:
 					weekday = curtime.tm_wday
@@ -3994,23 +4004,23 @@ class InfoBarHdmi2:
 
 	def HDMIInPiP(self):
 		if platform == "dm4kgen" or model in ("dm7080", "dm820"):
-			f = open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor", "r")
-			check = f.read()
-			f.close()
+			print("[InfoBarGenerics] Read /proc/stb/hdmi-rx/0/hdmi_rx_monitor")
+			check = open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor", "r").read()
+
 			if check.startswith("off"):
-				f = open("/proc/stb/audio/hdmi_rx_monitor", "w")
-				f.write("on")
-				f.close()
-				f = open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor", "w")
-				f.write("on")
-				f.close()
+				print("[InfoBarGenerics] Write to /proc/stb/audio/hdmi_rx_monitor")
+				open("/proc/stb/audio/hdmi_rx_monitor", "w").write("on")
+				print("[InfoBarGenerics] Write to /proc/stb/hdmi-rx/0/hdmi_rx_monitor")
+				open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor", "w").write("on")
+
+
 			else:
-				f = open("/proc/stb/audio/hdmi_rx_monitor", "w")
-				f.write("off")
-				f.close()
-				f = open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor", "w")
-				f.write("off")
-				f.close()
+				print("[InfoBarGenerics] Write to /proc/stb/audio/hdmi_rx_monitor")
+				open("/proc/stb/audio/hdmi_rx_monitor", "w").write("off")
+				print("[InfoBarGenerics] Write to /proc/stb/hdmi-rx/0/hdmi_rx_monitor")
+				open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor", "w").write("off")
+
+
 		else:
 			if not hasattr(self.session, 'pip') and not self.session.pipshown:
 				self.hdmi_enabled_pip = True
