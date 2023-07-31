@@ -162,6 +162,17 @@
 		<item text="Nameserver" description="Configure the nameserver (DNS).">config.network.dns</item>
 		<item text="Activate network settings" description="Activate the configured network settings.">config.network.activate</item>
 	</setup>
+	<setup key="OscamInfo" title="Oscam Info Settings">
+		<item level="0" text="Read Userdata from oscam.conf" description="Read Userdata from oscam.conf">config.oscaminfo.userdatafromconf</item>
+		<if conditional="not config.oscaminfo.userdatafromconf.value">
+			<item level="0" text="Username (httpuser)" description="Username (httpuser)">config.oscaminfo.username</item>
+			<item level="0" text="Password (httpwd)" description="Password (httpuser)">config.oscaminfo.password</item>
+			<item level="0" text="IP address" description="IP address">config.oscaminfo.ip</item>
+			<item level="0" text="Port" description="Port">config.oscaminfo.port</item>
+		</if>
+		<item level="0" text="Automatically update Client/Server View" description="Automatically update Client/Server View">config.oscaminfo.autoupdate</item>
+		<item level="0" text="Update interval (in seconds)" description="Update interval (in seconds)" conditional="config.oscaminfo.autoupdate.value">config.oscaminfo.intervall</item>
+	</setup>
 	<setup key="osd" title="OSD settings">
 		<item text="Alpha">config.osd.alpha</item>
 		<item text="Teletext alpha">config.osd.alpha_teletext</item>
