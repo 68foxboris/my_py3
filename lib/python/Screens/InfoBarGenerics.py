@@ -104,7 +104,7 @@ def getResumePoint(session):
 	if (ref is not None) and (ref.type != 1):
 		try:
 			entry = resumePointCache[ref.toString()]
-			entry[0] = int(time()) # update LRU timestamp
+			entry[0] = int(time())  # update LRU timestamp
 			return entry[1]
 		except KeyError:
 			return None
@@ -230,7 +230,7 @@ class InfoBarUnhandledKey:
 	# This function is called on every keypress!
 	def actionA(self, key, flag):
 		print("[InfoBarGenerics] Key: %s (%s) KeyID='%s'." % (key, KEYFLAGS.get(flag, _("Unknown")), KEYIDNAMES.get(key, _("Unknown"))))
-		if flag != 2: # Don't hide on repeat.
+		if flag != 2:  # Don't hide on repeat.
 			self.unhandledKeyDialog.hide()
 			if self.closeSIB(key) and self.secondInfoBarScreen and self.secondInfoBarScreen.shown:
 				self.secondInfoBarScreen.hide()
@@ -1247,7 +1247,7 @@ class InfoBarEPG:
 			self.openMultiServiceEPGSilent(bouquets, cnt, withCallback)
 
 	def openMultiServiceEPGAskBouquet(self, bouquets, cnt, withCallback):
-		if cnt > 1: # show bouquet list
+		if cnt > 1:  # show bouquet list
 			if withCallback:
 				self.bouquetSel = self.session.openWithCallback(self.closed, BouquetSelector, bouquets, self.openBouquetEPG, enableWrapAround=True)
 				self.dlg_stack.append(self.bouquetSel)
@@ -1266,7 +1266,7 @@ class InfoBarEPG:
 			current += 1
 		if current >= cnt:
 			current = 0
-		if cnt > 1: # create bouquet list for bouq+/-
+		if cnt > 1:  # create bouquet list for bouq+/-
 			self.bouquetSel = SilentBouquetSelector(bouquets, True, self.servicelist.getBouquetNumOffset(root))
 		if cnt >= 1:
 			self.openBouquetEPG(root, withCallback)
@@ -1285,7 +1285,7 @@ class InfoBarEPG:
 	def openSingleServiceEPG(self):
 		ref = self.servicelist.getCurrentSelection()
 		if ref:
-			if self.servicelist.getMutableList(): # bouquet in channellist
+			if self.servicelist.getMutableList():  # bouquet in channellist
 				current_path = self.servicelist.getRoot()
 				services = self.getBouquetServices(current_path)
 				self.serviceSel = SimpleServicelist(services)
@@ -1687,7 +1687,7 @@ class InfoBarSeek:
 				self.session.open(MessageBox, _("No fast winding possible yet... but you can use the number buttons to skip forward/backward!"), MessageBox.TYPE_INFO, timeout=10)
 				self.fast_winding_hint_message_showed = True
 				return
-			return 0 # trade as unhandled action
+			return 0  # trade as unhandled action
 		if self.seekstate == self.SEEK_STATE_PLAY:
 			self.setSeekState(self.makeStateForward(int(config.seek.enter_forward.value)))
 		elif self.seekstate == self.SEEK_STATE_PAUSE:
@@ -1723,7 +1723,7 @@ class InfoBarSeek:
 				self.session.open(MessageBox, _("No fast winding possible yet... but you can use the number buttons to skip forward/backward!"), MessageBox.TYPE_INFO, timeout=10)
 				self.fast_winding_hint_message_showed = True
 				return
-			return 0 # trade as unhandled action
+			return 0  # trade as unhandled action
 		seekstate = self.seekstate
 		if seekstate == self.SEEK_STATE_PLAY:
 			self.setSeekState(self.makeStateBackward(int(config.seek.enter_backward.value)))
@@ -1809,11 +1809,11 @@ class InfoBarSeek:
 		if self.seekstate != self.SEEK_STATE_PAUSE:
 			self.setSeekState(self.SEEK_STATE_EOF)
 
-		if seekstate not in (self.SEEK_STATE_PLAY, self.SEEK_STATE_PAUSE): # if we are seeking
+		if seekstate not in (self.SEEK_STATE_PLAY, self.SEEK_STATE_PAUSE):  # if we are seeking
 			seekable = self.getSeek()
 			if seekable is not None:
 				seekable.seekTo(-1)
-		if seekstate == self.SEEK_STATE_PLAY: # regular EOF
+		if seekstate == self.SEEK_STATE_PLAY:  # regular EOF
 			self.doEofInternal(True)
 		else:
 			self.doEofInternal(False)
@@ -1990,7 +1990,7 @@ class InfoBarTimeshift:
 
 	def seekdef(self, key):
 		if self.seekstate == self.SEEK_STATE_PLAY:
-			return 0 # trade as unhandled action
+			return 0  # trade as unhandled action
 		time = (-config.seek.selfdefined_13.value, False, config.seek.selfdefined_13.value,
 			-config.seek.selfdefined_46.value, False, config.seek.selfdefined_46.value,
 			-config.seek.selfdefined_79.value, False, config.seek.selfdefined_79.value)[key - 1]
@@ -2107,7 +2107,7 @@ class InfoBarTimeshift:
 			self.pauseService()
 		else:
 			print("[InfoBarGenerics] play, ...")
-			ts.activateTimeshift() # activate timeshift will automatically pause
+			ts.activateTimeshift()  # activate timeshift will automatically pause
 			self.setSeekState(self.SEEK_STATE_PAUSE)
 			seekable = self.getSeek()
 			if seekable is not None:
@@ -2507,6 +2507,10 @@ class InfoBarPiP:
 					if lastPiPServiceTimeout:
 						self.lastPiPServiceTimeoutTimer.startLongTimer(lastPiPServiceTimeout)
 				del self.session.pip
+				if SystemInfo["LCDMiniTV"] and int(config.lcd.modepip.value) >= 1:
+					print('[InfoBarGenerics] LCDMiniTV disable PIP')
+					print("[InfoBarGenerics] Write to /proc/stb/lcd/mode")
+					open("/proc/stb/lcd/mode", "w").write(config.lcd.modeminitv.value)
 				self.session.pipshown = False
 			if hasattr(self, "ScreenSaverTimerStart"):
 				self.ScreenSaverTimerStart()
@@ -2518,11 +2522,31 @@ class InfoBarPiP:
 			if self.session.pip.playService(newservice):
 				self.session.pipshown = True
 				self.session.pip.servicePath = slist and slist.getCurrentServicePath()
+				if SystemInfo["LCDMiniTVPiP"] and int(config.lcd.modepip.value) >= 1:
+					print('[InfoBarGenerics] LCDMiniTV enable PIP')
+					print("[InfoBarGenerics] Write to /proc/stb/lcd/mode")
+					open("/proc/stb/lcd/mode", "w").write(config.lcd.modepip.value)
+					print("[InfoBarGenerics] Write to /proc/stb/vmpeg/1/dst_width")
+					open("/proc/stb/vmpeg/1/dst_width", "w").write("0")
+					print("[InfoBarGenerics] Write to /proc/stb/vmpeg/1/dst_height")
+					open("/proc/stb/vmpeg/1/dst_height", "w").write("0")
+					print("[InfoBarGenerics] Write to /proc/stb/vmpeg/1/dst_apply")
+					open("/proc/stb/vmpeg/1/dst_apply", "w").write("1")
 			else:
 				newservice = self.session.nav.getCurrentlyPlayingServiceOrGroup() or (slist and slist.servicelist.getCurrent())
 				if self.session.pip.playService(newservice):
 					self.session.pipshown = True
 					self.session.pip.servicePath = slist and slist.getCurrentServicePath()
+					if SystemInfo["LCDMiniTVPiP"] and int(config.lcd.modepip.value) >= 1:
+						print('[InfoBarGenerics] LCDMiniTV enable PIP')
+						print("[InfoBarGenerics] Write to /proc/stb/lcd/mode")
+						open("/proc/stb/lcd/mode", "w").write(config.lcd.modepip.value)
+						print("[InfoBarGenerics] Write to /proc/stb/vmpeg/1/dst_width")
+						open("/proc/stb/vmpeg/1/dst_width", "w").write("0")
+						print("[InfoBarGenerics] Write to /proc/stb/vmpeg/1/dst_height")
+						open("/proc/stb/vmpeg/1/dst_height", "w").write("0")
+						print("[InfoBarGenerics] Write to /proc/stb/vmpeg/1/dst_apply")
+						open("/proc/stb/vmpeg/1/dst_apply", "w").write("1")
 				else:
 					self.session.pipshown = False
 					del self.session.pip
@@ -2942,7 +2966,7 @@ class InfoBarAudioSelection:
 
 	def audioSelectionLong(self):
 		if SystemInfo["CanDownmixAC3"]:
-			config.av.downmix_ac3.handleKey(KEY_RIGHT)
+			config.av.downmix_ac3.handleKey(ACTIONKEY_RIGHT)
 			config.av.downmix_ac3.save()
 			message = _("Dolby digital downmix is now %s") % config.av.downmix_ac3.getText()
 			print("[InfoBarGenerics] Audio dolby digital downmix is now %s" % config.av.downmix_ac3.value)
@@ -3257,6 +3281,7 @@ class InfoBarResolutionSelection:
 		else:
 			self.ExGreen_doHide()
 		return
+
 
 class InfoBarTimerButton:
 	def __init__(self):
@@ -4006,21 +4031,16 @@ class InfoBarHdmi2:
 		if platform == "dm4kgen" or model in ("dm7080", "dm820"):
 			print("[InfoBarGenerics] Read /proc/stb/hdmi-rx/0/hdmi_rx_monitor")
 			check = open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor", "r").read()
-
 			if check.startswith("off"):
 				print("[InfoBarGenerics] Write to /proc/stb/audio/hdmi_rx_monitor")
 				open("/proc/stb/audio/hdmi_rx_monitor", "w").write("on")
 				print("[InfoBarGenerics] Write to /proc/stb/hdmi-rx/0/hdmi_rx_monitor")
 				open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor", "w").write("on")
-
-
 			else:
 				print("[InfoBarGenerics] Write to /proc/stb/audio/hdmi_rx_monitor")
 				open("/proc/stb/audio/hdmi_rx_monitor", "w").write("off")
 				print("[InfoBarGenerics] Write to /proc/stb/hdmi-rx/0/hdmi_rx_monitor")
 				open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor", "w").write("off")
-
-
 		else:
 			if not hasattr(self.session, 'pip') and not self.session.pipshown:
 				self.hdmi_enabled_pip = True
@@ -4044,7 +4064,6 @@ class InfoBarHdmi2:
 		if platform == "dm4kgen" or model in ("dm7080", "dm820"):
 			print("[InfoBarGenerics] Read /proc/stb/hdmi-rx/0/hdmi_rx_monitor")
 			check = open("/proc/stb/hdmi-rx/0/hdmi_rx_monitor", "r").read()
-
 			if check.startswith("off"):
 				print("[InfoBarGenerics] Read /proc/stb/video/videomode")
 				self.oldvideomode = open("/proc/stb/video/videomode", "r").read()
