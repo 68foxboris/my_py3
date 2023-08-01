@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 from Components.ActionMap import HelpableActionMap
-from Components.config import config
+from Components.config import config, configfile
 from Components.HdmiCec import hdmi_cec as hdmiCec
 from Components.Sources.StaticText import StaticText
 from Screens.Setup import Setup
@@ -27,10 +26,10 @@ class HDMICECSetup(Setup):
 		self.updateAddress()
 
 	def updateAddress(self):
-		self.current_address = _("Current CEC address") + ": " + hdmiCec.getPhysicalAddress()
+		self["current_address"].setText("%s: %s" % (_("Current CEC address"), hdmiCec.getPhysicalAddress()))
 		value = config.hdmicec.fixed_physical_address.value
 		if value == "0.0.0.0":
-			self.fixed_address = _("Press yellow button to set CEC address again")
+			self["fixed_address"].setText(_("Using automatic address"))
 			if hdmiCec.getPhysicalAddress() != "0.0.0.0":
 				self["addressActions"].setEnabled(True)
 				self["key_yellow"].setText(_("Set fixed"))
@@ -38,7 +37,7 @@ class HDMICECSetup(Setup):
 				self["addressActions"].setEnabled(False)
 				self["key_yellow"].setText("")
 		else:
-			self.fixed_address = _("Using fixed address") + ": " + config.hdmicec.fixed_physical_address.value
+			self["fixed_address"].setText("%s: %s" % (_("Using fixed address"), value))
 			self["addressActions"].setEnabled(True)
 			self["key_yellow"].setText(_("Clear fixed"))
 
@@ -61,11 +60,7 @@ class HDMICECSetup(Setup):
 			self["addressActions"].setEnabled(config.hdmicec.enabled.value)
 			self["key_blue"].setText(_("Use defaults") if config.hdmicec.enabled.value else "")
 			self["defaultActions"].setEnabled(config.hdmicec.enabled.value)
-		#Setup.selectionChanged(self)
-
-	def getCurrentEntry(self):
-		text = "%s\n%s\n\n%s" % (self.current_address, self.fixed_address, self.getCurrentDescription()) if config.hdmicec.enabled.value else self.getCurrentDescription()
-		self["description"].setText(text)
+		Setup.selectionChanged(self)
 
 	def keySave(self):
 		config.hdmicec.save()

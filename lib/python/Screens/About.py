@@ -120,7 +120,7 @@ class About(Screen):
 			AboutText += fp_version
 			self["FPVersion"] = StaticText(fp_version)
 
-		if SystemInfo["HasHDMI-CEC"] and config.hdmicec.enabled.value:
+		if SystemInfo["HDMICEC"] and config.hdmicec.enabled.value:
 			address = config.hdmicec.fixed_physical_address.value if config.hdmicec.fixed_physical_address.value != "0.0.0.0" else _("No fixed address set")
 			AboutText += "\n" + _("HDMI-CEC Enabled") + ": " + address
 		else:

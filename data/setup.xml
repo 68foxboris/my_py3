@@ -110,7 +110,7 @@
 			<item level="0" text="Switch TV to correct input" description="When receiver wakes from standby it will command the TV to switch to the HDMI input to which the receiver is connected.">config.hdmicec.report_active_source</item>
 			<item level="0" text="Switch off the TV to correct input" description="Some TVs can't switch to the correct input if another HDMI port is active. This setting sets the TV to standby before the switch. (If the TV does not turn back on it may require a slower transmission interval or the repetition of the wake-up command.)" conditional="config.hdmicec.advanced_settings.value and config.hdmicec.report_active_source.value">config.hdmicec.workaround_activesource</item>
 			<item level="0" text="Handle wakeup from TV" description="When enabled the receiver will automatically wake from standby when the TV is turned on.">config.hdmicec.handle_tv_wakeup</item>
-			<item level="0" text="Handle standby from TV" description="When enabled the receiver will automatically return to standby when the TV is turned off.">config.hdmicec.handle_tv_standby</item>
+			<item level="0" text="Handle standby from TV" description="When enabled, receiver will automatically return to the set mode when the TV is turned off or the power button on the receiver's remote is pressed. If the set mode is 'Deep Standby' and the TV is active on another input, if we press the power button on the receiver remote, receiver will remain on standby.">config.hdmicec.handle_tv_standby</item>
 			<if conditional="config.hdmicec.advanced_settings.value">
 				<item level="0" text="Handle input from TV" description="Allows the TV remote to be used to control the receiver.">config.hdmicec.handle_tv_input</item>
 				<item level="0" text="Time delay until standby or deep standby" description="'Handle standby from TV' has a higher priority than 'Handle input from TV'." conditional="config.hdmicec.handle_tv_standby.value != 'disabled' or config.hdmicec.handle_tv_input.value != 'disabled'">config.hdmicec.handle_tv_delaytime</item>
@@ -465,5 +465,6 @@
 	</setup>
 	<setup key="wizardsetup" title="Wizard setup">
 		<item level="0" text="Setup mode" description="Configure which access level to use for the configuration menu. Expert level gives access to all items.">config.usage.setup_level</item>
+		<item level="0" text="Enable HDMI-CEC" description="When enabled, HDMI-CEC is enabled with standard configuration" requires="HDMICEC">config.hdmicec.enabled</item>
 	</setup>
 </setupxml>
