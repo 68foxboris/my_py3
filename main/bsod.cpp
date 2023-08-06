@@ -257,8 +257,7 @@ void bsodFatal(const char *component)
 
 		fprintf(f, "\n");
 		stringFromFile(f, "kernelcmdline", "/proc/cmdline");
-		fprintf(f, "\nnimsockets:\n");
-		dumpFile(f, "/proc/bus/nim_sockets");
+		stringFromFile(f, "nimsockets", "/proc/bus/nim_sockets");
 
 		/* dump the log ringbuffer */
 		fprintf(f, "\n\n");

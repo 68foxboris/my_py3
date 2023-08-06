@@ -1,14 +1,14 @@
 from os.path import join
 from Tools.Directories import SCOPE_SKINS, resolveFilename
+from Components.SystemInfo import BoxInfo
 
 hw_info = None
 
 
 class HardwareInfo:
-	device_name = None
+	device_name = _("unavailable")
 	device_brandname = None
 	device_model = None
-	device_brand = None
 	device_version = ""
 	device_revision = ""
 	device_hdmi = False
@@ -66,14 +66,19 @@ class HardwareInfo:
 		else:
 			self.machine_name = self.device_model
 
+		self.device_model = self.device_model or self.device_name
+		self.device_hw = self.device_model
+		self.machine_name = self.device_model
+
 		if self.device_revision:
-			self.device_string = "%s (%s-%s)" % (self.device_model, self.device_revision, self.device_version)
+			self.device_string = "%s (%s-%s)" % (self.device_hw, self.device_revision, self.device_version)
 		elif self.device_version:
-			self.device_string = "%s (%s)" % (self.device_model, self.device_version)
+			self.device_string = "%s (%s)" % (self.device_hw, self.device_version)
 		else:
 			self.device_string = self.device_hw
 		# only some early DMM boxes do not have HDMI hardware
-		self.device_hdmi = self.device_model not in ("dm800", "dm8000")
+		self.device_hdmi = BoxInfo.getItem("hdmi")
+
 		print("[HardwareInfo] Detected: " + self.get_device_string())
 
 	def get_device_name(self):
@@ -82,9 +87,6 @@ class HardwareInfo:
 	def get_device_model(self):
 		return hw_info.device_model
 
-	def get_device_brand(self):
-		return hw_info.device_brand
-
 	def get_device_version(self):
 		return hw_info.device_version
 
@@ -92,15 +94,10 @@ class HardwareInfo:
 		return hw_info.device_revision
 
 	def get_device_string(self):
-		from boxbranding import getBoxType
-		if hw_info.device_revision:
-			return "%s (%s-%s)" % (getBoxType(), hw_info.device_revision, hw_info.device_version)
-		elif hw_info.device_version:
-			return "%s (%s)" % (getBoxType(), hw_info.device_version)
-		return getBoxType()
+		return hw_info.device_string
 
 	def get_machine_name(self):
-		return hw_info.device_name
+		return hw_info.machine_name
 
 	def has_hdmi(self):
 		return hw_info.device_hdmi

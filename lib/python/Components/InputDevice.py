@@ -10,10 +10,14 @@ from enigma import eRCInput
 from keyids import KEYIDS, KEYIDNAMES
 from Components.config import ConfigSubsection, ConfigInteger, ConfigSelection, ConfigYesNo, ConfigText, ConfigSlider, config
 from Components.Console import Console
-from Components.SystemInfo import BoxInfo
+from Components.SystemInfo import BoxInfo, SystemInfo
 from Tools.Directories import SCOPE_KEYMAPS, SCOPE_SKINS, fileReadLine, fileWriteLine, fileReadLines, fileReadXML, resolveFilename, pathExists
 
 from six import ensure_str
+
+model = BoxInfo.getItem("model")
+brand = BoxInfo.getItem("brand")
+
 MODULE_NAME = __name__.split(".")[-1]
 
 # BLACKLIST = ("dreambox front panel", "cec_input")  # Why was this being done?

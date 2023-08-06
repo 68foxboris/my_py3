@@ -15,9 +15,14 @@ enigma.eTimer = eBaseImpl.eTimer
 enigma.eSocketNotifier = eBaseImpl.eSocketNotifier
 enigma.eConsoleAppContainer = eConsoleImpl.eConsoleAppContainer
 from Components.config import config, configfile, ConfigText, ConfigYesNo, ConfigInteger, ConfigSelection, ConfigSubsection, NoSave
-from Components.SystemInfo import BoxInfo, SystemInfo, ARCHITECTURE, MODEL
+from Components.SystemInfo import BoxInfo
 
 from traceback import print_exc
+
+model = BoxInfo.getItem("model")
+brand = BoxInfo.getItem("brand")
+platform = BoxInfo.getItem("platform")
+socfamily = BoxInfo.getItem("socfamily")
 
 
 
@@ -689,7 +694,7 @@ from Components.Lcd import IconCheck, InitLcd
 InitLcd()
 IconCheck()
 
-if MODEL in ("dm7080", "dm820"):
+if model in ("dm7080", "dm820"):
 	MODULE_NAME = __name__.split(".")[-1]
 	fileUpdateLine("/proc/stb/hdmi-rx/0/hdmi_rx_monitor", conditionValue="on", replacementValue="off", source=MODULE_NAME)
 	fileUpdateLine("/proc/stb/audio/hdmi_rx_monitor", conditionValue="on", replacementValue="off", source=MODULE_NAME)

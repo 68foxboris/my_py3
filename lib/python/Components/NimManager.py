@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 
-from Components.SystemInfo import SystemInfo
+from Components.SystemInfo import BoxInfo, SystemInfo
 from Tools.BoundFunction import boundFunction
 
 from Components.config import config, ConfigSubsection, ConfigSelection, ConfigFloat, ConfigSatlist, ConfigYesNo, ConfigInteger, ConfigSubList, ConfigNothing, ConfigSubDict, ConfigOnOff, ConfigDateTime, ConfigText
@@ -13,6 +13,8 @@ from datetime import datetime
 from itertools import chain
 
 import xml.etree.ElementTree
+
+socfamily = BoxInfo.getItem("socfamily")
 
 config.unicable = ConfigSubsection()
 
