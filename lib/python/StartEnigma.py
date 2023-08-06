@@ -24,6 +24,18 @@ brand = BoxInfo.getItem("brand")
 platform = BoxInfo.getItem("platform")
 socfamily = BoxInfo.getItem("socfamily")
 
+# These entries should be moved back to UsageConfig.py when it is safe to bring UsageConfig init to this location in StartEnigma.py.
+#
+config.crash = ConfigSubsection()
+config.crash.debugScreens = ConfigYesNo(default=False)
+config.crash.debugKeyboards = ConfigYesNo(default=False)
+config.crash.debugRemoteControls = ConfigYesNo(default=False)
+config.crash.debugDVBScan = ConfigYesNo(default=False)
+
+# config.plugins needs to be defined before InputDevice < HelpMenu < MessageBox < InfoBar
+config.plugins = ConfigSubsection()
+config.plugins.remotecontroltype = ConfigSubsection()
+config.plugins.remotecontroltype.rctype = ConfigInteger(default=0)
 
 
 # New Plugin Style
@@ -40,11 +52,6 @@ config.misc.plugin_style = ConfigSelection(default="normallstyle", choices=[
 config.misc.virtualkeyBoardstyle = ConfigSelection(default="new", choices=[
 	("new", _("New style")),
 	("e2", _("Enigma2 default"))])
-
-# config.plugins needs to be defined before InputDevice < HelpMenu < MessageBox < InfoBar
-config.plugins = ConfigSubsection()
-config.plugins.remotecontroltype = ConfigSubsection()
-config.plugins.remotecontroltype.rctype = ConfigInteger(default=0)
 
 profile("SetupDevices")
 import Components.SetupDevices

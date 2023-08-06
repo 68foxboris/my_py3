@@ -9,6 +9,7 @@ from Components.NimManager import nimmanager
 from Components.Renderer.FrontpanelLed import ledPatterns, PATTERN_ON, PATTERN_OFF, PATTERN_BLINK
 from Components.ServiceList import refreshServiceList
 from Components.SystemInfo import BoxInfo, SystemInfo
+from os import makedirs
 from os.path import exists, islink, join as pathjoin, normpath
 import os
 import skin, locale
@@ -1341,31 +1342,31 @@ def InitUsageConfig():
 	config.usage.keytrans = ConfigText(default=keytranslation)
 	config.usage.alternative_imagefeed = ConfigText(default="", fixed_size=False)
 
-	config.crash = ConfigSubsection()
+	# This is already in StartEniga.py.
+	# config.crash = ConfigSubsection()
 
-	#// handle python crashes
+	# Handle python crashes.
 	config.crash.bsodpython = ConfigYesNo(default=True)
 	config.crash.bsodpython_ready = NoSave(ConfigYesNo(default=False))
-	choicelist = [("0", _("never")), ("1", "1"), ("2", "2"), ("3", "3"), ("4", "4"), ("5", "5"), ("6", "6"), ("7", "7"), ("8", "8"), ("9", "9"), ("10", "10")]
-	config.crash.bsodhide = ConfigSelection(default="0", choices=choicelist)
-	config.crash.bsodmax = ConfigSelection(default="3", choices=choicelist)
-	#//
+	choiceList = [("0", _("Never"))] + [(str(x), str(x)) for x in range(1, 11)]
+	config.crash.bsodhide = ConfigSelection(default="0", choices=choiceList)
+	config.crash.bsodmax = ConfigSelection(default="3", choices=choiceList)
 
 	config.crash.enabledebug = ConfigYesNo(default=False)
 	config.crash.debugloglimit = ConfigSelectionNumber(min=1, max=10, stepwidth=1, default=4, wraparound=True)
-	config.crash.daysloglimit = ConfigSelectionNumber(min=1, max=30, stepwidth=1, default=2, wraparound=True)
-	config.crash.sizeloglimit = ConfigSelectionNumber(min=1, max=250, stepwidth=1, default=5, wraparound=True)
+	config.crash.daysloglimit = ConfigSelectionNumber(min=1, max=30, stepwidth=1, default=8, wraparound=True)
+	config.crash.sizeloglimit = ConfigSelectionNumber(min=1, max=250, stepwidth=1, default=10, wraparound=True)
 	config.crash.lastfulljobtrashtime = ConfigInteger(default=-1)
 
 	# The config.crash.debugTimeFormat item is used to set ENIGMA_DEBUG_TIME environmental variable on enigma2 start from enigma2.sh.
-	config.crash.debugTimeFormat = ConfigSelection(choices=[
+	config.crash.debugTimeFormat = ConfigSelection(default="6", choices=[
 		("0", _("None")),
 		("1", _("Boot time")),
 		("2", _("Local time")),
 		("3", _("Boot time and local time")),
 		("6", _("Local date/time")),
 		("7", _("Boot time and local data/time"))
-	], default="6")
+	])
 	config.crash.debugTimeFormat.save_forced = True
 
 	config.crash.gstdebug = ConfigYesNo(default=False)
