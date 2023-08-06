@@ -158,7 +158,7 @@ class VideoHardware:
 
         if SystemInfo["HasScart"]:
                 modes["Scart"] = ["PAL", "NTSC", "Multi"]
-        if SystemInfo["HasComposite"] and HardwareInfo().get_device_name() in ("dm7020hd", "dm7020hdv2", "dm8000"):
+        if SystemInfo["HasComposite"] and platform in ("dm4kgen"):
                 modes["RCA"] = ["576i", "PAL", "NTSC", "Multi"]
         if SystemInfo["HasYPbPr"]:
                 modes["YPbPr"] = ["720p", "1080i", "576p", "480p", "576i", "480i"]
@@ -439,7 +439,8 @@ class VideoHardware:
         # get a list with all modes, with all rates, for a given port.
         def getModeList(self, port):
                 print("[Videomode] VideoHardware getModeList for port", port)
-                res = []:
+                res = []
+                if platform != "dmamlogic":
                         for mode in self.modes[port]:
                                 # list all rates which are completely valid
                                 rates = [rate for rate in self.rates[mode] if self.isModeAvailable(port, mode, rate)]

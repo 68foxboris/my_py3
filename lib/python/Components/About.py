@@ -215,9 +215,9 @@ def getChipSetNumber():
 
 
 def getCPUBrand():
-	if SystemInfo["AmlogicFamily"]:
+	if BoxInfo.getItem("AmlogicFamily"):
 		return _("Amlogic")
-	elif SystemInfo["HiSilicon"]:
+	elif BoxInfo.getItem("HiSilicon"):
 		return _("HiSilicon")
 	elif socfamily.startswith("smp"):
 		return _("Sigma Designs")
@@ -228,12 +228,11 @@ def getCPUBrand():
 
 
 def getCPUArch():
-	if SystemInfo["ArchIsARM64"]:
+	if BoxInfo.getItem("ArchIsARM64"):
 		return _("ARM64")
-	elif SystemInfo["ArchIsARM"]:
+	elif BoxInfo.getItem("ArchIsARM"):
 		return _("ARM")
-	else:
-		return _("Mipsel")
+	return _("Mipsel")
 
 
 def getDriverInstalledDate():
