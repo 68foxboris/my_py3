@@ -10,7 +10,6 @@ from Components.Sources.RecordState import RecordState
 from Components.Converter.Combine import Combine
 from Components.Renderer.FrontpanelLed import FrontpanelLed
 from Components.config import config
-from Components.SystemInfo import BoxInfo
 
 
 class SessionGlobals(Screen):
