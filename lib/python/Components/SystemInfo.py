@@ -6,7 +6,7 @@ from re import findall
 from subprocess import PIPE, Popen
 
 from enigma import Misc_Options, eDVBCIInterfaces, eDVBResourceManager, eGetEnigmaDebugLvl, eDBoxLCD
-from Tools.Directories import SCOPE_LIBDIR, SCOPE_SKIN, fileCheck, fileContains, fileReadLine, fileReadLines, resolveFilename
+from Tools.Directories import SCOPE_LIBDIR, SCOPE_SKIN, fileCheck, fileContains, fileReadLine, fileReadLines, fileExists, resolveFilename
 from Tools.StbHardware import getBoxProc
 
 MODULE_NAME = __name__.split(".")[-1]
@@ -198,9 +198,6 @@ def getBootdevice():
 	return dev
 
 
-SystemInfo["ArchIsARM"] = ARCHITECTURE.startswith(("arm", "cortex"))
-SystemInfo["ArchIsARM64"] = "64" in ARCHITECTURE
-
 def getRCFile(ext):
 	filename = resolveFilename(SCOPE_SKIN, pathjoin("rc_models", "%s.%s" % (BoxInfo.getItem("rcname"), ext)))
 	if not isfile(filename):
@@ -361,7 +358,7 @@ SystemInfo["LcdLiveDecoder"] = fileCheck("/proc/stb/lcd/live_decoder")
 SystemInfo["3DMode"] = fileCheck("/proc/stb/fb/3dmode") or fileCheck("/proc/stb/fb/primary/3d")
 SystemInfo["3DZNorm"] = fileCheck("/proc/stb/fb/znorm") or fileCheck("/proc/stb/fb/primary/zoffset")
 SystemInfo["Blindscan_t2_available"] = fileCheck("/proc/stb/info/vumodel")
-SystemInfo["RcTypeChangable"] = not (model in ("gbquad4k", "gbue4k", "et8500") or model.startswith("et7")) and pathExists("/proc/stb/ir/rc/type")
+SystemInfo["RcTypeChangable"] = not (model in ("gbquad4k", "gbue4k", "et8500") or model.startswith("et7")) and fileCheck("/proc/stb/ir/rc/type")
 SystemInfo["HasFullHDSkinSupport"] = BoxInfo.getItem("fhdskin")
 SystemInfo["HasMMC"] = "root" in cmdline and cmdline["root"].startswith("/dev/mmcblk")
 SystemInfo["HasTranscoding"] = BoxInfo.getItem("transcoding") or BoxInfo.getItem("multitranscoding") or fileCheck("/proc/stb/encoder/0") or fileCheck("/dev/bcm_enc0")
@@ -428,8 +425,8 @@ SystemInfo["DreamBoxAudio"] = platform == "dm4kgen" or model in ("dm7080", "dm80
 SystemInfo["DreamBoxDVI"] = model in ("dm8000", "dm800")
 SystemInfo["VFDRepeats"] = brand != "ixuss" and not BoxInfo.getItem("7segment")
 SystemInfo["VFDSymbol"] = BoxInfo.getItem("vfdsymbol")
-SystemInfo["ArchIsARM64"] = ARCHITECTURE == "aarch64" or "64" in ARCHITECTURE
-SystemInfo["ArchIsARM"] = ARCHITECTURE.startswith(("arm", "cortex"))
+SystemInfo["ArchIsARM64"] = architecture == "aarch64" or "64" in architecture
+SystemInfo["ArchIsARM"] = architecture.startswith(("arm", "cortex"))
 SystemInfo["FirstCheckModel"] = model in ("tmtwin4k", "mbmicrov2", "revo4k", "force3uhd", "mbmicro", "e4hd", "e4hdhybrid", "valalinux", "lunix", "tmnanom3", "purehd", "force2nano", "purehdse") or brand in ("linkdroid", "wetek")
 SystemInfo["SecondCheckModel"] = model in ("osninopro", "osnino", "osninoplus", "dm7020hd", "dm7020hdv2", "9910lx", "9911lx", "9920lx", "tmnanose", "tmnanoseplus", "tmnanosem2", "tmnanosem2plus", "tmnanosecombo", "force2plus", "force2", "force2se", "optimussos", "fusionhd", "fusionhdse", "force2plushv") or brand == "ixuss"
 SystemInfo["SeekStatePlay"] = False
@@ -446,6 +443,7 @@ SystemInfo["CanDownmixDTS"] = fileCheck("/proc/stb/audio/dts_choices", "downmix"
 SystemInfo["CanDownmixAAC"] = fileCheck("/proc/stb/audio/aac_choices", "downmix")
 SystemInfo["CanDownmixAACPlus"] = fileCheck("/proc/stb/audio/aacplus_choices", "downmix")
 SystemInfo["HDMIAudioSource"] = fileCheck("/proc/stb/hdmi/audio_source")
+SystemInfo["SCART"] = BoxInfo.getItem("scart") and procModel != "ultra"
 SystemInfo["CanAC3Transcode"] = fileCheck("/proc/stb/audio/ac3plus_choices", "force_ac3")
 SystemInfo["CanDTSHD"] = fileCheck("/proc/stb/audio/dtshd_choices", "downmix")
 SystemInfo["CanAACTranscode"] = fileCheck("/proc/stb/audio/aac_transcode_choices", "off")
