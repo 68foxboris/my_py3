@@ -41,12 +41,12 @@ void eLCD::setSize(int xres, int yres, int bpp)
 {
 	_stride = xres * bpp / 8;
 	_buffer = new unsigned char[xres * yres * bpp / 8];
-#ifdef LCD_DM900_Y_OFFSET
-	xres -= LCD_DM900_Y_OFFSET;
+#ifdef DM9X0_LCD
+	xres -= LCD_DM9X0_Y_OFFSET;
 #endif
 	res = eSize(xres, yres);
 	memset(_buffer, 0, xres * yres * bpp / 8);
-	eDebug("[eLCD] (%dx%dx%d) buffer %p %d bytes, stride %d", xres, yres, bpp, _buffer, xres * yres * bpp / 8, _stride);
+	eTrace("[eLCD] (%dx%dx%d) buffer %p %d bytes, stride %d", xres, yres, bpp, _buffer, xres * yres * bpp / 8, _stride);
 }
 
 eLCD::~eLCD()
@@ -147,7 +147,7 @@ void eLCD::renderText(ePoint start, const char *text)
 		message = replace_all(message, "\n", " ");
 		if (::write(lcdfd, message.c_str(), message.size()) == -1)
 		{
-			eDebug("[eLCD] renderText %s failed (%m)", text);
+			eTrace("[eLCD] renderText %s failed (%m)", text);
 		}
 	}
 }
@@ -168,7 +168,7 @@ eDBoxLCD::eDBoxLCD()
 	else
 		m_oled_brightness_proc = 0;
 
-	eDebug("[eLCD] m_oled_brightness_proc = %d", m_oled_brightness_proc);
+	eTrace("[eLCD] m_oled_brightness_proc = %d", m_oled_brightness_proc);
 
 	lcdfd = open("/dev/dbox/oled0", O_RDWR);
 
@@ -260,7 +260,7 @@ int eDBoxLCD::setLCDContrast(int contrast)
 #define LCDSET 0x1000
 #define LCD_IOCTL_SRV (10 | LCDSET)
 #endif
-	eDebug("[eDboxLCD] setLCDContrast %d", contrast);
+	eTrace("[eDboxLCD] setLCDContrast %d", contrast);
 
 	int fp;
 	if ((fp = open("/dev/dbox/fp0", O_RDWR)) < 0)
@@ -435,7 +435,7 @@ void eDBoxLCD::update()
 #if !defined(HAVE_TEXTLCD) && !defined(HAVE_7SEGMENT)
 	if (lcdfd >= 0)
 	{
-		[[maybe_unused]] ssize_t ret; /* dummy value to store write return values */
+		ssize_t ret; /* dummy value to store write return values */
 		if (lcd_type == 0 || lcd_type == 2)
 		{
 			unsigned char raw[132 * 8];
@@ -490,13 +490,13 @@ void eDBoxLCD::update()
 			}
 			else
 			{
-#if defined(LCD_DM900_Y_OFFSET)
+#if defined(DM9X0_LCD)
 				unsigned char gb_buffer[_stride * res.height()];
 				for (int offset = 0; offset < ((_stride * res.height()) >> 2); offset++)
 				{
 					unsigned int src = 0;
-					if (offset % (_stride >> 2) >= LCD_DM900_Y_OFFSET)
-						src = ((unsigned int *)_buffer)[offset - LCD_DM900_Y_OFFSET];
+					if (offset % (_stride >> 2) >= LCD_DM9X0_Y_OFFSET)
+						src = ((unsigned int *)_buffer)[offset - LCD_DM9X0_Y_OFFSET];
 					//                                             blue                         red                  green low                     green high
 					((unsigned int *)gb_buffer)[offset] = ((src >> 3) & 0x001F001F) | ((src << 3) & 0xF800F800) | ((src >> 8) & 0x00E000E0) | ((src << 8) & 0x07000700);
 				}

@@ -76,29 +76,30 @@ AC_DEFINE_UNQUOTED(PLATFORM,"$PLATFORM",[platform])
 
 AC_ARG_WITH(nolcd,
 	AC_HELP_STRING([--with-nolcd], [disable ascii based lcd, yes or no]),
-	[[withnolcd=$withval]],
-	[[withnolcd=no]]
+	[[with_nolcd=$withval]],
+	[[with_nolcd=no]]
 )
-if test x"$withnolcd" != xno ; then
+if test x"$with_nolcd" != xno ; then
 	AC_DEFINE(NO_LCD, 1,[Define when disable an ascii based lcd device])
 fi
-AM_CONDITIONAL(NO_LCD, test x"$withnolcd" != xno)
+AM_CONDITIONAL(NO_LCD, test x"$with_nolcd" != xno)
 
 AC_ARG_WITH(textlcd,
 	AC_HELP_STRING([--with-textlcd], [use ascii based lcd, yes or no]),
-	[[withtextlcd=$withval]],
-	[[withtextlcd=no]]
+	[[with_textlcd=$withval]],
+	[[with_textlcd=no]]
 )
-if test x"$withtextlcd" != xno ; then
+if test x"$with_textlcd" != xno ; then
 	AC_DEFINE(HAVE_TEXTLCD, 1,[Define when using an ascii based lcd device])
 fi
-AM_CONDITIONAL(HAVE_TEXTLCD, test x"$withtextlcd" != xno)
+AM_CONDITIONAL(HAVE_TEXTLCD, test x"$with_textlcd" != xno)
 
 AC_ARG_WITH(7segment,
-	AC_HELP_STRING([--with-7segment], [use ascii based lcd, yes or no]),
-	[[with7segment=$withval]],
-	[[with7segment=no]]
+	AC_HELP_STRING([--with-7segment], [use 7 segment lcd, yes or no]),
+	[[TEXTSKIN="7segment"]],
+	[[TEXTSKIN="default"]]
 )
+AC_SUBST(TEXTSKIN)
 if test x"$with7segment" != xno ; then
 	AC_DEFINE(HAVE_7SEGMENT, 1,[Define when using an ascii based lcd device])
 fi
@@ -106,103 +107,103 @@ AM_CONDITIONAL(HAVE_7SEGMENT, test x"$with7segment" != xno)
 
 AC_ARG_WITH(colorlcd220,
 	AC_HELP_STRING([--with-colorlcd220], [use 220x176 16bpp color display, yes or no]),
-	[[withcolorlcd220=$withval]],
-	[[withcolorlcd220=no]]
+	[[with_colorlcd220=$withval]],
+	[[with_colorlcd220=no]]
 )
-if test x"$withcolorlcd220" != xno ; then
+if test x"$with_colorlcd220" != xno ; then
 	AC_DEFINE(HAVE_COLORLCD220, 1,[Define when using a 220x176 color display device])
 fi
-AM_CONDITIONAL(HAVE_COLORLCD220, test x"$withcolorlcd220" != xno)
+AM_CONDITIONAL(HAVE_COLORLCD220, test x"$with_colorlcd220" != xno)
 
 AC_ARG_WITH(colorlcd240,
 	AC_HELP_STRING([--with-colorlcd240], [use 240x320 16bpp color display, yes or no]),
-	[[withcolorlcd240=$withval]],
-	[[withcolorlcd240=no]]
+	[[with_colorlcd240=$withval]],
+	[[with_colorlcd240=no]]
 )
-if test x"$withcolorlcd240" != xno ; then
+if test x"$with_colorlcd240" != xno ; then
 	AC_DEFINE(HAVE_COLORLCD240, 1,[Define when using a 240x320 color display device])
 fi
-AM_CONDITIONAL(HAVE_COLORLCD240, test x"$withcolorlcd240" != xno)
+AM_CONDITIONAL(HAVE_COLORLCD240, test x"$with_colorlcd240" != xno)
 
 AC_ARG_WITH(colorlcd390,
 	AC_HELP_STRING([--with-colorlcd390], [use 390x240 16bpp color display, yes or no]),
-	[[withcolorlcd390=$withval]],
-	[[withcolorlcd390=no]]
+	[[with_colorlcd390=$withval]],
+	[[with_colorlcd390=no]]
 )
-if test x"$withcolorlcd390" != xno ; then
+if test x"$with_colorlcd390" != xno ; then
 	AC_DEFINE(HAVE_COLORLCD390, 1,[Define when using a 390x240 color display device])
 fi
-AM_CONDITIONAL(HAVE_COLORLCD390, test x"$withcolorlcd390" != xno)
+AM_CONDITIONAL(HAVE_COLORLCD390, test x"$with_colorlcd390" != xno)
 
 AC_ARG_WITH(colorlcd400,
 	AC_HELP_STRING([--with-colorlcd400], [use 400x176 16bpp color display, yes or no]),
-	[[withcolorlcd400=$withval]],
-	[[withcolorlcd400=no]]
+	[[with_colorlcd400=$withval]],
+	[[with_colorlcd400=no]]
 )
-if test x"$withcolorlcd400" != xno ; then
+if test x"$with_colorlcd400" != xno ; then
 	AC_DEFINE(HAVE_COLORLCD400, 1,[Define when using a 400x176 color display device])
 fi
-AM_CONDITIONAL(HAVE_COLORLCD400, test x"$withcolorlcd400" != xno)
+AM_CONDITIONAL(HAVE_COLORLCD400, test x"$with_colorlcd400" != xno)
 
 AC_ARG_WITH(colorlcd480,
 	AC_HELP_STRING([--with-colorlcd480], [use 480x320 16bpp color display, yes or no]),
-	[[withcolorlcd480=$withval]],
-	[[withcolorlcd480=no]]
+	[[with_colorlcd480=$withval]],
+	[[with_colorlcd480=no]]
 )
-if test x"$withcolorlcd480" != xno ; then
+if test x"$with_colorlcd480" != xno ; then
 	AC_DEFINE(HAVE_COLORLCD480, 1,[Define when using a 480x320 color display device])
 fi
-AM_CONDITIONAL(HAVE_COLORLCD480, test x"$withcolorlcd480" != xno)
+AM_CONDITIONAL(HAVE_COLORLCD480, test x"$with_colorlcd480" != xno)
 
 AC_ARG_WITH(colorlcd720,
 	AC_HELP_STRING([--with-colorlcd720], [use 720x576 16bpp color display, yes or no]),
-	[[withcolorlcd720=$withval]],
-	[[withcolorlcd720=no]]
+	[[with_colorlcd720=$withval]],
+	[[with_colorlcd720=no]]
 )
-if test x"$withcolorlcd720" != xno ; then
+if test x"$with_colorlcd720" != xno ; then
 	AC_DEFINE(HAVE_COLORLCD720, 1,[Define when using a 720x576 color display device])
 fi
-AM_CONDITIONAL(HAVE_COLORLCD720, test x"$withcolorlcd720" != xno)
+AM_CONDITIONAL(HAVE_COLORLCD720, test x"$with_colorlcd720" != xno)
 
 AC_ARG_WITH(colorlcd800,
 	AC_HELP_STRING([--with-colorlcd800], [use 800x480 16bpp color display, yes or no]),
-	[[withcolorlcd800=$withval]],
-	[[withcolorlcd800=no]]
+	[[with_colorlcd800=$withval]],
+	[[with_colorlcd800=no]]
 )
-if test x"$withcolorlcd800" != xno ; then
+if test x"$with_colorlcd800" != xno ; then
 	AC_DEFINE(HAVE_COLORLCD800, 1,[Define when using a 800x480 color display device])
 fi
-AM_CONDITIONAL(HAVE_COLORLCD800, test x"$withcolorlcd800" != xno)
+AM_CONDITIONAL(HAVE_COLORLCD800, test x"$with_colorlcd800" != xno)
 
 AC_ARG_WITH(bwlcd128,
 	AC_HELP_STRING([--with-bwlcd128], [use 128x32 1bpp black and white display, yes or no]),
-	[[withbwlcd128=$withval]],
-	[[withbwlcd128=no]]
+	[[with_bwlcd128=$withval]],
+	[[with_bwlcd128=no]]
 )
-if test x"$withbwlcd128" != xno ; then
+if test x"$with_bwlcd128" != xno ; then
 	AC_DEFINE(HAVE_BWLCD128, 1,[Define when using a 128x32 black and white display device])
 fi
-AM_CONDITIONAL(HAVE_BWLCD128, test x"$withbwlcd128" != xno)
+AM_CONDITIONAL(HAVE_BWLCD128, test x"$with_bwlcd128" != xno)
 
 AC_ARG_WITH(bwlcd140,
 	AC_HELP_STRING([--with-bwlcd140], [use 140x32 1bpp black and white display, yes or no]),
-	[[withbwlcd140=$withval]],
-	[[withbwlcd140=no]]
+	[[with_bwlcd140=$withval]],
+	[[with_bwlcd140=no]]
 )
-if test x"$withbwlcd140" != xno ; then
+if test x"$with_bwlcd140" != xno ; then
 	AC_DEFINE(HAVE_BWLCD140, 1,[Define when using a 140x32 black and white display device])
 fi
-AM_CONDITIONAL(HAVE_BWLCD140, test x"$withbwlcd140" != xno)
+AM_CONDITIONAL(HAVE_BWLCD140, test x"$with_bwlcd140" != xno)
 
 AC_ARG_WITH(bwlcd255,
 	AC_HELP_STRING([--with-bwlcd255], [use 255x64 1bpp black and white display, yes or no]),
-	[[withbwlcd255=$withval]],
-	[[withbwlcd255=no]]
+	[[with_bwlcd255=$withval]],
+	[[with_bwlcd255=no]]
 )
-if test x"$withbwlcd255" != xno ; then
+if test x"$with_bwlcd255" != xno ; then
 	AC_DEFINE(HAVE_BWLCD255, 1,[Define when using a 255x64 black and white display device])
 fi
-AM_CONDITIONAL(HAVE_BWLCD255, test x"$withbwlcd255" != xno)
+AM_CONDITIONAL(HAVE_BWLCD255, test x"$with_bwlcd255" != xno)
 
 AC_ARG_WITH(libsdl,
 	AS_HELP_STRING([--with-libsdl],[use libsdl, yes or no]),
@@ -348,33 +349,44 @@ AM_CONDITIONAL(HAVE_LIBVUGLES2, test "$with_libvugles2" = "yes")
 
 AC_ARG_WITH(osdanimation,
 	AC_HELP_STRING([--with-osdanimation], [use osd animation, yes or no]),
-	[[withosdanimation=$withval]],
-	[[withosdanimation=no]]
+	[[with_osdanimation=$withval]],
+	[[with_osdanimation=no]]
 )
-if test x"$withosdanimation" != xno ; then
+if test x"$with_osdanimation" != xno ; then
 	AC_DEFINE(HAVE_OSDANIMATION, 1,[Define if driver supports animation of osd])
 fi
-AM_CONDITIONAL(HAVE_OSDANIMATION, test x"$withosdanimation" != xno)
+AM_CONDITIONAL(HAVE_OSDANIMATION, test x"$with_osdanimation" != xno)
 
-AM_CONDITIONAL(HAVE_TEMPFANCONTROL, test "$BOXTYPE" == dm8000 -o "$BOXTYPE" == dm800se -o "$BOXTYPE" == dm500hd)
-AM_CONDITIONAL(DM9X0, test `echo "$BOXTYPE" | cut -b 1-3` == "dm9")
-AM_CONDITIONAL(DREAMBOXDMM2, test "$PLATFORM" == "dm4kgen" -o "$PLATFORM" == "dm3gen" -o "$PLATFORM" == "dm2gen")
+AC_ARG_WITH(fhdskin,
+	AC_HELP_STRING([--with-fhdskin], [use full hd skin, yes or no]),
+	[[with_fhdskin=$withval]],
+	[[with_fhdskin=no]]
+)
+if test x"$with_fhdskin" != xno ; then
+	AC_DEFINE(HAVE_FHDSKIN, 1,[Define if box supports full hd skin])
+fi
+AM_CONDITIONAL(HAVE_FHDSKIN, test x"$with_fhdskin" != xno)
 
-AM_CONDITIONAL(HAVE_COLORLCD1, test "$BOXTYPE" == "dm8000" -o "$BOXTYPE" == "dm800" -o "$BOXTYPE" == "dm7020hd" -o "$BOXTYPE" == "dm7020hdv2")
-AM_CONDITIONAL(HAVE_COLORLCD2, test "$BOXTYPE" == "dm800se" -o "$BOXTYPE" == "dm800sev2" -o "$BOXTYPE" == "dm820")
-AM_CONDITIONAL(HAVE_COLORLCD3, test "$BOXTYPE" == "dm7080")
-AM_CONDITIONAL(HAVE_GRAUTEC70X0, test "$BOXTYPE" == "dm7020hd" -o "$BOXTYPE" == "dm7020hdv2" -o "$BOXTYPE" == "dm7080")
-AM_CONDITIONAL(HAVE_GRAUTEC8000, test "$BOXTYPE" == "dm8000")
-AM_CONDITIONAL(LCD_FRAMEBUFFER_MODE, test "$BOXTYPE" == et8500 -o "$BOXTYPE" == et8500s -o "$BOXTYPE" == 8100s)
+
 
 if test "$BOXTYPE" == "mbmicro" -o "$BOXTYPE" == "e4hd" -o "$BOXTYPE" == "e4hdhybrid" -o "$BOXTYPE" == "twinboxlcd" -o "$BOXTYPE" == "singleboxlcd" -o "$BOXTYPE" == "twinboxlcdci5" -o "$BOXTYPE" == "sf208" -o "$BOXTYPE" == "sf228" -o "$BOXTYPE" == "sf238" -o "$BOXTYPE" == "odin2hybrid" -o "$BOXTYPE" == "odinplus"; then
 	AC_DEFINE(KEY_PLAY_ACTUALLY_IS_KEY_PLAYPAUSE, 1,[define when rc sends a KEY_PLAY event for its KEY_PLAYPAUSE key])
+	AC_DEFINE(LCD_COLOR_BITORDER_RGB565, 1,[define when lcd uses RGB565 bitorder])
 fi
 
 if test "$BOXTYPE" == "8100s"; then
 	AC_DEFINE(KEY_VIDEO_TO_KEY_BOOKMARKS, 1,[define when rc sends a KEY_VIDEO event for its KEY_BOOKMARKS])
 	AC_DEFINE(LCD_FRAMEBUFFER_MODE, 1,[define the framebuffer LCD mode])
 fi
+
+if test "$BOXBRAND" == "azbox"; then
+	AC_DEFINE(AZBOX, 1, [Azbox hardware])
+	AC_DEFINE(FORCE_NO_BLENDING_ACCELERATION, 1,[define when the framebuffer acceleration does not have alphablending support, though the autodetection might indicate that it does])
+	AC_DEFINE(FORCE_NO_ACCELNEVER, 1,[define when the framebuffer acceleration auto not working correct])
+	AC_DEFINE(KEY_PLAY_ACTUALLY_IS_KEY_PLAYPAUSE, 1,[define when rc sends a KEY_PLAY event for its KEY_PLAYPAUSE key])
+	AC_DEFINE(KEY_HOME_TO_KEY_OPEN, 1,[define when rc sends a KEY_HOME event for its KEY_OPEN])
+fi
+
 
 if test "$BOXTYPE" == "blackbox7405"; then
 	AC_DEFINE(FORCE_ADVANCED_REMOTE, 1,[define to fixup the input device identification when the remote control is actually an 'advanced' remote (with play/forward/rewind keys)])
@@ -400,38 +412,56 @@ fi
 
 if test "$BOXBRAND" == "dags"; then
 	AC_DEFINE(FORCE_NO_BLENDING_ACCELERATION, 1,[define when the framebuffer acceleration does not have alphablending support, though the autodetection might indicate that it does])
-
+	AC_DEFINE(FORCE_ADVANCED_REMOTE, 1,[define to fixup the input device identification when the remote control is actually an 'advanced' remote (with play/forward/rewind keys)])
 fi
+
+AM_CONDITIONAL(HAVE_TEMPFANCONTROL, test "$BOXTYPE" == dm8000 -o "$BOXTYPE" == dm800se -o "$BOXTYPE" == dm500hd)
+AM_CONDITIONAL(HAVE_COLORLCD1, test "$BOXTYPE" == "dm8000" -o "$BOXTYPE" == "dm800" -o "$BOXTYPE" == "dm7020hd" -o "$BOXTYPE" == "dm7020hdv2")
+AM_CONDITIONAL(HAVE_COLORLCD2, test "$BOXTYPE" == "dm800se" -o "$BOXTYPE" == "dm800sev2" -o "$BOXTYPE" == "dm820")
+AM_CONDITIONAL(HAVE_COLORLCD3, test "$BOXTYPE" == "dm7080")
+AM_CONDITIONAL(HAVE_GRAUTEC70X0, test "$BOXTYPE" == "dm7020hd" -o "$BOXTYPE" == "dm7020hdv2" -o "$BOXTYPE" == "dm7080")
+AM_CONDITIONAL(HAVE_GRAUTEC8000, test "$BOXTYPE" == "dm8000")
+AM_CONDITIONAL(LCD_FRAMEBUFFER_MODE, test "$BOXTYPE" == "et8500" -o "$STBPLATFORM" == "8100s")
+AM_CONDITIONAL(DM9X0, test `echo "$BOXTYPE" | cut -b 1-3` == "dm9")
+AM_CONDITIONAL(DREAMBOXDMM2, test "$PLATFORM" == "dm4kgen" -o "$PLATFORM" == "dm3gen" -o "$PLATFORM" == "dm2gen")
+
 
 if test "$BOXBRAND" == "dreambox"; then
 	AC_DEFINE(DREAMBOX, 1, [Dreambox hardware])
 	AC_DEFINE(KEY_PLAY_ACTUALLY_IS_KEY_PLAYPAUSE, 1,[define when rc sends a KEY_PLAY event for its KEY_PLAYPAUSE key])
-
+#	AC_DEFINE(HAVE_FREEZE, 1, [define when freeze workaround is needed])
 fi
 
-if test "$BOXTYPE" == "et8500" -o "$BOXTYPE" == "et8500s"; then
-	AC_DEFINE(FORCE_ALPHABLENDING_ACCELERATION, 1,[define when the framebuffer acceleration has alphablending support, but detection slow down all])
-	AC_DEFINE(LCD_FRAMEBUFFER_MODE, 1,[define the framebuffer LCD mode])
+AM_CONDITIONAL(DMAMLOGIC, test "$STBPLATFORM" == "dmamlogic")
+if test "$STBPLATFORM" == "dmamlogic"; then
+	ALSA_CFLAGS="-lasound"
+	FFMPEG_CFLAGS="-lavdevice -lavformat -lavcodec -lswresample -lswscale -lavutil -lm"
+	AC_DEFINE(DREAMBOX_DUAL_TUNER, 1,[define dreambox dual tuner])
+	AC_DEFINE(HAVE_DMAMLOGIC, 1, [Dreambox Amlogic hardware])
 fi
 
-if test "$BOXTYPE" == "dm7020hd" -o "$BOXTYPE" == "dm7020hdv2" -o "$BOXTYPE" == "dm820" -o "$BOXTYPE" == "dm800se" -o "$BOXTYPE" == "dm800sev2"; then
+AM_CONDITIONAL(DREAMBOXDVI, test "$BOXTYPE" == "dm800" -o "$BOXTYPE" == "dm8000")
 
-
+if test "$BOXTYPE" == "dm7020hd" -o "$BOXTYPE" == "dm7020hdv2" -o "$BOXTYPE" == "dm800se" -o "$BOXTYPE" == "dm800sev2"; then
 	AC_DEFINE(DREAMBOX_DUAL_TUNER, 1,[define dreambox dual tuner])
 fi
 
-if test "$BOXTYPE" == "dm820" -o "$BOXTYPE" == "dm520"; then
+if test "$BOXTYPE" == "dm520"; then
 	AC_DEFINE(CONFIG_ION, 1,[define when we need to use ION allocator])
 fi
 
-if test "$BOXTYPE" == "dm900" -o "$BOXTYPE" == "dm920"; then
-	AC_DEFINE(LCD_DM900_Y_OFFSET, 4,[define LCD Y offset for dm900 and dm920])
-fi
-
-if test `echo "$BOXTYPE" | cut -b 1-3` == "dm9"; then
+if test "$BOXTYPE" == "dm7080" -o "$BOXTYPE" == "dm820"; then
 	AC_DEFINE(DREAMBOX_DUAL_TUNER, 1,[define dreambox dual tuner])
 	AC_DEFINE(CONFIG_ION, 1,[define when we need to use ION allocator])
-	AC_DEFINE(DREAMBOX_MOVE_LCD, 1,[define when we need to move lcd text a bit to the right])
+	AC_DEFINE(HAVE_HDMIIN_DREAMBOX, 1,[has dreambox hdmi in])
+fi
+
+if test "$STBPLATFORM" == "dm4kgen"; then
+	AC_DEFINE(DREAMBOX_DUAL_TUNER, 1,[define dreambox dual tuner])
+	AC_DEFINE(CONFIG_ION, 1,[define when we need to use ION allocator])
+	AC_DEFINE(DM9X0_LCD, 1,[define when we need to move lcd text a bit to the right])
+	AC_DEFINE(LCD_DM9X0_Y_OFFSET, 4,[define LCD Y offset for dm9x0])
+	AC_DEFINE(HAVE_HDMIIN_DREAMBOX, 1,[has dreambox hdmi in])
 fi
 
 if test "$BOXTYPE" == "e4hd" -o "$BOXTYPE" == "e4hdhybrid"; then
@@ -456,7 +486,7 @@ fi
 
 if test "$BOXTYPE" == "et8500"; then
 	AC_DEFINE(FORCE_ALPHABLENDING_ACCELERATION, 1,[define when the framebuffer acceleration has alphablending support, but detection slow down all])
-	AC_DEFINE(HAVE_COLORLCD720, 1,[define when using a 720x576 color display device])
+	AC_DEFINE(LCD_FRAMEBUFFER_MODE, 1,[define the framebuffer LCD mode])
 fi
 
 if test "$BOXTYPE" == "et1x000" -o "$BOXTYPE" == "et7x00" -o "$BOXTYPE" == "ultramini"; then
@@ -470,7 +500,11 @@ if test "$BOXTYPE" == "et13000" -o "$BOXTYPE" == "beyonwizu4"; then
 	AC_DEFINE(FORCE_ALPHABLENDING_ACCELERATION, 1,[define when the framebuffer acceleration has alphablending support, but detection slow down all])
 fi
 
-if test "$BOXTYPE" == "enfinity" -o "$BOXTYPE" == "marvel1" -o "$BOXTYPE" == "bre2ze"; then
+if test "$BOXTYPE" == "sf4008" -o "$BOXTYPE" == "beyonwizu4"; then
+	AC_DEFINE(LCD_SCROLL_HEX, 1,[define LCD scroll values in hex])
+fi
+
+if test "$STBPLATFORM" == "ew7358" -o "$BOXTYPE" == "bre2ze"; then
 	AC_DEFINE(KEY_PLAY_ACTUALLY_IS_KEY_PLAYPAUSE, 1,[define when rc sends a KEY_PLAY event for its KEY_PLAYPAUSE key])
 	AC_DEFINE(KEY_MEDIA_TO_KEY_LIST, 1,[define when rc sends a KEY_MEDIA event for its KEY_LIST key])
 fi
@@ -499,6 +533,7 @@ if test "$BOXTYPE" == "gbquad4k" -o "$BOXTYPE" == "gbue4k" -o "$BOXTYPE" == "gbx
 	AC_DEFINE(KEY_F2_TO_KEY_F6, 1,[define when rc sends a KEY_F2 event for its KEY_F6 key])
 	AC_DEFINE(KEY_SCREEN_TO_KEY_MODE, 1,[define when rc sends a KEY_MODE event for its KEY_ASPECT key])
 	AC_DEFINE(KEY_CONTEXT_MENU_TO_KEY_AUX, 1,[define when rc sends a KEY_CONTEXT_MENU event for its KEY_AUX key])
+	AC_DEFINE(VIDEO_MODE_50, 1,[gigablue workaround for wrong videomode proc])
 fi
 
 if test "$BOXTYPE" == "gbquad4k" -o "$BOXTYPE" == "vuuno4kse"; then
