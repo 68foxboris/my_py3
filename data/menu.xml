@@ -65,7 +65,7 @@
 						<id val="lcd" />
 						<item entryID="display_skin_selector" level="0" text="LCD Skin Setup" weight="5" requires="LCDSupport"><screen module="SkinSelector" screen="LcdSkinSelector" /></item>
 						<item entryID="lcd_setup" level="1" text="LCD Setup" weight="10"><setup id="FrontDisplay" /></item>
-						<item entryID="led_setup" level="1" text="LED Setup" weight="15"><setup id="LEDDisplay" /></item
+						<item entryID="led_setup" level="1" text="LED Setup" weight="15"><setup id="LEDDisplay" /></item>
 					</menu>
 				</menu>
 				<menu entryID="usage_setup" level="0" text="Log Manager" weight="2">
