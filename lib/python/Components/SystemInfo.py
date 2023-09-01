@@ -6,7 +6,7 @@ from re import findall
 from subprocess import PIPE, Popen
 
 from enigma import Misc_Options, eAVControl, eDVBCIInterfaces, eDVBResourceManager, eGetEnigmaDebugLvl, eDBoxLCD
-from Tools.Directories import SCOPE_LIBDIR, SCOPE_SKIN, fileCheck, fileContains, fileReadLine, fileReadLines, fileExists, resolveFilename
+from Tools.Directories import SCOPE_LIBDIR, SCOPE_SKIN, scopeLCDSkin, fileCheck, fileContains, fileReadLine, fileReadLines, fileExists, resolveFilename
 from Tools.StbHardware import getBoxProc
 
 MODULE_NAME = __name__.split(".")[-1]
@@ -324,42 +324,15 @@ SystemInfo["PIPAvailable"] = BoxInfo.getItem("NumVideoDecoders", 0) > 1
 SystemInfo["CanMeasureFrontendInputPower"] = eDVBResourceManager.getInstance().canMeasureFrontendInputPower()
 SystemInfo["12V_Output"] = Misc_Options.getInstance().detected_12V_output()
 SystemInfo["ZapMode"] = fileCheck("/proc/stb/video/zapmode") or fileCheck("/proc/stb/video/zapping_mode")
-SystemInfo["NumFrontpanelLEDs"] = countFrontpanelLEDs()
-SystemInfo["FrontpanelDisplay"] = fileExists("/dev/dbox/oled0") or fileExists("/dev/dbox/lcd0")
-SystemInfo["LCDsymbol_circle_recording"] = fileCheck("/proc/stb/lcd/symbol_circle") or model in ("hd51", "vs1500") and fileCheck("/proc/stb/lcd/symbol_recording")
-SystemInfo["LCDsymbol_timeshift"] = fileCheck("/proc/stb/lcd/symbol_timeshift")
-SystemInfo["LCDshow_symbols"] = (model.startswith("et9") or model in ("hd51", "vs1500")) and fileCheck("/proc/stb/lcd/show_symbols")
-SystemInfo["LCDsymbol_hdd"] = model in ("hd51", "vs1500") and fileCheck("/proc/stb/lcd/symbol_hdd")
-SystemInfo["FrontpanelDisplayGrayscale"] = fileCheck("/dev/dbox/oled0")
 SystemInfo["CanUse3DModeChoices"] = fileCheck("/proc/stb/fb/3dmode_choices")
 SystemInfo["DeepstandbySupport"] = model != "dm800"
 SystemInfo["Fan"] = BoxInfo.getItem("fan") or fileCheck("/proc/stb/fp/fan") or exists("/proc/fan") or procModel in ("ultra", "premium+")
 SystemInfo["FanPWM"] = BoxInfo.getItem("Fan") and fileCheck("/proc/stb/fp/fan_pwm")
-SystemInfo["PowerLED"] = fileCheck("/proc/stb/power/powerled") or model in ("gbue4k", "gbquad4k") and fileCheck("/proc/stb/fp/led1_pattern")
-SystemInfo["StandbyLED"] = fileCheck("/proc/stb/power/standbyled") or model in ("gbue4k", "gbquad4k") and fileCheck("/proc/stb/fp/led0_pattern")
-SystemInfo["SuspendLED"] = fileCheck("/proc/stb/power/suspendled") or fileCheck("/proc/stb/fp/enable_led")
-SystemInfo["Display"] = SystemInfo["FrontpanelDisplay"] or SystemInfo["StandbyLED"] or model in ("one", "two")
-SystemInfo["LedPowerColor"] = fileCheck("/proc/stb/fp/ledpowercolor")
-SystemInfo["LedStandbyColor"] = fileCheck("/proc/stb/fp/ledstandbycolor")
-SystemInfo["LedSuspendColor"] = fileCheck("/proc/stb/fp/ledsuspendledcolor")
-SystemInfo["Power4x7On"] = fileCheck("/proc/stb/fp/power4x7on")
-SystemInfo["Power4x7Standby"] = fileCheck("/proc/stb/fp/power4x7standby")
-SystemInfo["Power4x7Suspend"] = fileCheck("/proc/stb/fp/power4x7suspend")
-SystemInfo["PowerOffDisplay"] = model not in "formuler1" and fileCheck("/proc/stb/power/vfd") or fileCheck("/proc/stb/lcd/vfd")
 SystemInfo["WakeOnLAN"] = fileCheck("/proc/stb/power/wol") or fileCheck("/proc/stb/fp/wol")
 SystemInfo["HasExternalPIP"] = platform != "1genxt" and fileCheck("/proc/stb/vmpeg/1/external")
 SystemInfo["VideoDestinationConfigurable"] = fileCheck("/proc/stb/vmpeg/0/dst_left")
 SystemInfo["hasPIPVisibleProc"] = fileCheck("/proc/stb/vmpeg/1/visible")
 SystemInfo["MaxPIPSize"] = platform in ("gfuturesbcmarm", "8100s", "h7") and (360, 288) or (540, 432)
-SystemInfo["VFD_scroll_repeats"] = not model.startswith("et8500") and fileCheck("/proc/stb/lcd/scroll_repeats")
-SystemInfo["VFD_scroll_delay"] = not model.startswith("et8500") and fileCheck("/proc/stb/lcd/scroll_delay")
-SystemInfo["VFD_initial_scroll_delay"] = not model.startswith("et8500") and fileCheck("/proc/stb/lcd/initial_scroll_delay")
-SystemInfo["VFD_final_scroll_delay"] = not model.startswith("et8500") and fileCheck("/proc/stb/lcd/final_scroll_delay")
-SystemInfo["LcdLiveTV"] = fileCheck("/proc/stb/fb/sd_detach") or fileCheck("/proc/stb/lcd/live_enable")
-SystemInfo["LcdLiveTVMode"] = fileCheck("/proc/stb/lcd/mode")
-SystemInfo["LcdLiveDecoder"] = fileCheck("/proc/stb/lcd/live_decoder")
-SystemInfo["LCDMiniTV"] = fileExists("/proc/stb/lcd/mode")
-SystemInfo["ConfigDisplay"] = SystemInfo["FrontpanelDisplay"]
 SystemInfo["DefaultDisplayBrightness"] = model in ("dm900", "dm920", "one", "two") and 8 or 5
 SystemInfo["FastChannelChange"] = False
 SystemInfo["3DMode"] = fileCheck("/proc/stb/fb/3dmode") or fileCheck("/proc/stb/fb/primary/3d")
@@ -415,8 +388,6 @@ SystemInfo["OScamIsActive"] = SystemInfo["OScamInstalled"] and fileCheck("/tmp/.
 SystemInfo["NCamInstalled"] = isfile("/usr/bin/ncam")
 SystemInfo["NCamIsActive"] = SystemInfo["NCamInstalled"] and fileCheck("/tmp/.ncam/ncam.version")
 SystemInfo["OLDE2API"] = model == "dm800"
-SystemInfo["7segment"] = displaytype == "7segment" or "7seg" in displaytype
-SystemInfo["textlcd"] = displaytype == "textlcd" or "text" in displaytype
 SystemInfo["HiSilicon"] = socfamily.startswith("hisi") or exists("/proc/hisi") or isfile("/usr/bin/hihalt") or exists("/usr/lib/hisilicon")
 SystemInfo["DefineSat"] = platform in ("octagonhisil", "octagonhisilnew", "gbmv200", "uclanhisil") or model in ("beyonwizv2", "viper4k")
 SystemInfo["AmlogicFamily"] = socfamily.startswith(("aml", "meson")) or fileCheck("/proc/device-tree/amlogic-dt-id") or isfile("/usr/bin/amlhalt") or exists("/sys/module/amports")
@@ -425,8 +396,7 @@ SystemInfo["AndroidMode"] = BoxInfo.getItem("RecoveryMode") and model == "multib
 SystemInfo["grautec"] = fileCheck("/tmp/usbtft")
 SystemInfo["DreamBoxAudio"] = platform == "dm4kgen" or model in ("dm7080", "dm800")
 SystemInfo["DreamBoxDVI"] = model in ("dm8000", "dm800")
-SystemInfo["VFDRepeats"] = brand != "ixuss" and not BoxInfo.getItem("7segment")
-SystemInfo["VFDSymbol"] = BoxInfo.getItem("vfdsymbol")
+SystemInfo["DifferentLCDSettings"] = model in ("spycat4kmini", "osmega")
 SystemInfo["ArchIsARM64"] = architecture == "aarch64" or "64" in architecture
 SystemInfo["ArchIsARM"] = architecture.startswith(("arm", "cortex"))
 SystemInfo["FirstCheckModel"] = model in ("tmtwin4k", "mbmicrov2", "revo4k", "force3uhd", "mbmicro", "e4hd", "e4hdhybrid", "valalinux", "lunix", "tmnanom3", "purehd", "force2nano", "purehdse") or brand in ("linkdroid", "wetek")
@@ -473,4 +443,43 @@ SystemInfo["HasAutoVolumeLevel"] = fileCheck("/proc/stb/audio/autovolumelevel_ch
 SystemInfo["Has3DSurround"] = fileCheck("/proc/stb/audio/3d_surround_choices") and fileCheck("/proc/stb/audio/3d_surround")
 SystemInfo["Has3DSpeaker"] = fileCheck("/proc/stb/audio/3d_surround_speaker_position_choices") and fileCheck("/proc/stb/audio/3d_surround_speaker_position")
 SystemInfo["Has3DSurroundSpeaker"] = fileCheck("/proc/stb/audio/3dsurround_choices") and fileCheck("/proc/stb/audio/3dsurround")
-SystemInfo["SCART"] = BoxInfo.getItem("scart") and procModel != "ultra"
+
+BoxInfo.setItem("LcdDisplay", fileExists("/dev/dbox/lcd0"))
+BoxInfo.setItem("LcdLiveTV", fileCheck("/proc/stb/fb/sd_detach") or fileCheck("/proc/stb/lcd/live_enable"))
+BoxInfo.setItem("LcdLiveTVPiP", fileCheck("/proc/stb/lcd/live_decoder"))
+BoxInfo.setItem("LCDMiniTV", fileExists("/proc/stb/lcd/mode"))
+BoxInfo.setItem("LCDMiniTVPiP", BoxInfo.getItem("LCDMiniTV") and brand not in ("gb800ueplus", "gbquad4k", "gbue4k"))
+BoxInfo.setItem("LCDSKINSetup", fileExists("/usr/share/enigma2/display"))
+BoxInfo.setItem("LEDButtons", model == "vuultimo")
+BoxInfo.setItem("LEDColorControl", fileExists("/proc/stb/fp/led_color"))
+BoxInfo.setItem("LEDPowerColor", fileExists("/proc/stb/fp/ledpowercolor"))
+BoxInfo.setItem("LEDStandbyColor", fileExists("/proc/stb/fp/ledstandbycolor"))
+BoxInfo.setItem("LEDSuspendColor", fileExists("/proc/stb/fp/ledsuspendledcolor"))
+BoxInfo.setItem("MiddleFlash", BoxInfo.getItem("middleflash") and not BoxInfo.getItem("smallflash"))
+BoxInfo.setItem("MiniTV", fileCheck("/proc/stb/fb/sd_detach") or fileCheck("/proc/stb/lcd/live_enable"))
+BoxInfo.setItem("need_dsw", brand not in ("osminiplus", "osmega"))
+BoxInfo.setItem("NumFrontpanelLEDs", countFrontpanelLEDs())
+BoxInfo.setItem("NumVideoDecoders", getNumVideoDecoders())
+BoxInfo.setItem("OledDisplay", fileExists("/dev/dbox/oled0") or brand in ("osminiplus",))
+BoxInfo.setItem("ConfigDisplay", BoxInfo.getItem("FrontpanelDisplay") and displaytype not in ("7segment",))
+BoxInfo.setItem("FBLCDDisplay", fileCheck("/proc/stb/fb/sd_detach"))
+BoxInfo.setItem("FrontpanelDisplay", fileExists("/dev/dbox/oled0") or fileExists("/dev/dbox/lcd0"))
+BoxInfo.setItem("VFDSymbolsPoll1", brand in ('osninopro', 'osnino', 'osninoplus', 'tmtwin4k', 'mbmicrov2', 'revo4k', 'force3uhd', 'mbmicro', 'e4hd', 'e4hdhybrid', 'dm7020hd', 'dm7020hdv2', '9910lx', '9911lx', '9920lx', 'dual') or model in ('dags7362', 'dags73625', 'dags5', 'ustym4kpro', 'ustym4ks2ottx', 'beyonwizv2', 'viper4k', 'sf8008', 'sf8008m', 'gbmv200', 'sfx6008', 'sx88v2', 'sx888'))
+BoxInfo.setItem("VFDSymbols", BoxInfo.getItem("VFDSymbolsPoll1") or model in ("u41",) or brand in ("fulan",) or model in ("alphatriple", "spycat4kmini", "osminiplus", "osmega", "sf3038", "spycat", "et7500", "maram9", "uniboxhd1", "uniboxhd2", "uniboxhd3", "sezam5000hd", "mbtwin", "sezam1000hd", "mbmini", "atemio5x00", "beyonwizt3"))
+BoxInfo.setItem("DisplaySetup", model not in ("dreamone",))
+BoxInfo.setItem("VFD_scroll_repeats", eDBoxLCD.getInstance().get_VFD_scroll_repeats())
+BoxInfo.setItem("VFD_scroll_delay", eDBoxLCD.getInstance().get_VFD_scroll_delay())
+BoxInfo.setItem("VFD_initial_scroll_delay", eDBoxLCD.getInstance().get_VFD_initial_scroll_delay())
+BoxInfo.setItem("VFD_final_scroll_delay", eDBoxLCD.getInstance().get_VFD_final_scroll_delay())
+BoxInfo.setItem("StandbyPowerLed", fileExists("/proc/stb/power/standbyled"))
+BoxInfo.setItem("SuspendPowerLed", fileExists("/proc/stb/power/suspendled"))
+BoxInfo.setItem("OledDisplay", fileExists("/dev/dbox/oled0") or brand
+ in ("osminiplus",))
+BoxInfo.setItem("PIPAvailable", BoxInfo.getItem("NumVideoDecoders", 1) > 1)
+BoxInfo.setItem("Power4x7On", fileExists("/proc/stb/fp/power4x7on"))
+BoxInfo.setItem("Power4x7Standby", fileExists("/proc/stb/fp/power4x7standby"))
+BoxInfo.setItem("Power4x7Suspend", fileExists("/proc/stb/fp/power4x7suspend"))
+BoxInfo.setItem("PowerLed", fileExists("/proc/stb/power/powerled"))
+BoxInfo.setItem("PowerLed2", fileExists("/proc/stb/power/powerled2"))
+SystemInfo["LCDsymbol_circle_recording"] = fileCheck("/proc/stb/lcd/symbol_circle") or model in ("hd51", "vs1500") and fileCheck("/proc/stb/lcd/symbol_recording")
+SystemInfo["LCDsymbol_timeshift"] = fileCheck("/proc/stb/lcd/symbol_timeshift")

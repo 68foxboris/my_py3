@@ -590,28 +590,32 @@ def InitUsageConfig():
 	config.usage.show_event_progress_in_servicelist.addNotifier(refreshServiceList)
 	config.usage.show_channel_numbers_in_servicelist.addNotifier(refreshServiceList)
 
-	if BoxInfo.getItem("7segment"):
+	# Standby.
+	if BoxInfo.getItem("displaytype") in ("7segment",):
 		config.usage.blinking_display_clock_during_recording = ConfigSelection(default="Rec", choices=[
 			("Rec", _("REC")),
 			("RecBlink", _("Blinking REC")),
 			("Time", _("Time")),
 			("Nothing", _("Nothing"))
 		])
+	else:
+		config.usage.blinking_display_clock_during_recording = ConfigYesNo(default=False)
+
+	# In use.
+	if BoxInfo.getItem("displaytype") in ("textlcd",):
+		config.usage.blinking_rec_symbol_during_recording = ConfigSelection(default="Channel", choices=[
+			("Rec", _("REC Symbol")),
+			("RecBlink", _("Blinking REC Symbol")),
+			("Channel", _("Channel name"))
+		])
+	if BoxInfo.getItem("displaytype") in ("7segment",):
 		config.usage.blinking_rec_symbol_during_recording = ConfigSelection(default="Rec", choices=[
 			("Rec", _("REC")),
 			("RecBlink", _("Blinking REC")),
 			("Time", _("Time"))
 		])
 	else:
-		config.usage.blinking_display_clock_during_recording = ConfigYesNo(default=False)
 		config.usage.blinking_rec_symbol_during_recording = ConfigYesNo(default=True)
-
-	if BoxInfo.getItem("textlcd"):
-		config.usage.blinking_rec_symbol_during_recording = ConfigSelection(default="Channel", choices=[
-			("Rec", _("REC symbol")),
-			("RecBlink", _("Blinking REC symbol")),
-			("Channel", _("Channel name"))
-		])
 
 	config.usage.show_in_standby = ConfigSelection(default="time", choices=[
 		("time", _("Time")),
@@ -676,36 +680,6 @@ def InitUsageConfig():
 		("3", _("Remaining & Elapsed"))
 	])
 	config.usage.elapsed_time_positive_vfd = ConfigYesNo(default=False)
-
-	config.usage.frontled_color = ConfigSelection(default="1", choices=[
-		("0", _("Off")),
-		("1", _("Blue")),
-		("2", _("Red")),
-		("3", _("Blinking blue")),
-		("4", _("Blinking red"))
-	])
-	config.usage.frontledrec_color = ConfigSelection(default="4", choices=[
-		("0", _("Off")),
-		("1", _("Blue")),
-		("2", _("Red")),
-		("3", _("Blinking blue")),
-		("4", _("Blinking red"))
-	])
-	config.usage.frontledstdby_color = ConfigSelection(default="2", choices=[
-		("0", _("Off")),
-		("1", _("Blue")),
-		("2", _("Red")),
-		("3", _("Blinking Violet")),
-		("4", _("Blinking red"))
-	])
-	config.usage.frontledrecstdby_color = ConfigSelection(default="4", choices=[
-		("0", _("Off")),
-		("1", _("Blue")),
-		("2", _("Red")),
-		("3", _("Blinking blue")),
-		("4", _("Blinking red"))
-	])
-
 	config.usage.lcd_scroll_delay = ConfigSelection(default="10000", choices=[
 		("10000", _("%d seconds") % 10),
 		("20000", _("%d seconds") % 20),
@@ -1415,132 +1389,6 @@ def InitUsageConfig():
 			("holdtilllock", _("Hold till locked"))
 		])
 		config.misc.zapmode.addNotifier(setZapmode, immediate_feedback=False)
-
-	config.usage.historymode = ConfigSelection(default='1', choices=[('0', _('Just zap')), ('1', _('Show menu'))])
-
-
-	if SystemInfo["HasBypassEdidChecking"]:
-		def setHasBypassEdidChecking(configElement):
-			open(SystemInfo["HasBypassEdidChecking"], "w").write("00000001" if configElement.value else "00000000")
-		config.av.bypassEdidChecking = ConfigYesNo(default=False)
-		config.av.bypassEdidChecking.addNotifier(setHasBypassEdidChecking)
-
-	if SystemInfo["HasColorspace"]:
-		def setHaveColorspace(configElement):
-			open(SystemInfo["HasColorspace"], "w").write(configElement.value)
-		if SystemInfo["HasColorspaceSimple"]:
-			config.av.hdmicolorspace = ConfigSelection(default="Edid(Auto)", choices={
-				"Edid(Auto)": _("Auto"),
-				"Hdmi_Rgb": _("RGB"),
-				"444": _("YCbCr444"),
-				"422": _("YCbCr422"),
-				"420": _("YCbCr420")
-			})
-		else:
-			if model == "vuzero4k" or BoxInfo.getItem("platform") == "dm4kgen":
-				config.av.hdmicolorspace = ConfigSelection(default="Edid(Auto)", choices={
-					"Edid(Auto)": _("Auto"),
-					"Hdmi_Rgb": _("RGB"),
-					"Itu_R_BT_709": _("BT709"),
-					"DVI_Full_Range_RGB": _("Full Range RGB"),
-					"FCC": _("FCC 1953"),
-					"Itu_R_BT_470_2_BG": _("BT470 BG"),
-					"Smpte_170M": _("Smpte 170M"),
-					"Smpte_240M": _("Smpte 240M"),
-					"Itu_R_BT_2020_NCL": _("BT2020 NCL"),
-					"Itu_R_BT_2020_CL": _("BT2020 CL"),
-					"XvYCC_709": _("BT709 XvYCC"),
-					"XvYCC_601": _("BT601 XvYCC")
-				})
-			else:
-				config.av.hdmicolorspace = ConfigSelection(default="auto", choices={
-					"auto": _("Auto"),
-					"rgb": _("RGB"),
-					"420": _("420"),
-					"422": _("422"),
-					"444": _("444")
-				})
-		config.av.hdmicolorspace.addNotifier(setHaveColorspace)
-
-	if SystemInfo["HasColordepth"]:
-		def setHaveColordepth(configElement):
-			open(SystemInfo["HasColordepth"], "w").write(configElement.value)
-		config.av.hdmicolordepth = ConfigSelection(default="auto", choices={
-			"auto": _("Auto"),
-			"8bit": _("8 bit"),
-			"10bit": _("10 bit"),
-			"12bit": _("12 bit")
-		})
-		config.av.hdmicolordepth.addNotifier(setHaveColordepth)
-
-	if SystemInfo["HasHDMIpreemphasis"]:
-		def setHDMIpreemphasis(configElement):
-			open(SystemInfo["HasHDMIpreemphasis"], "w").write("on" if configElement.value else "off")
-		config.av.hdmipreemphasis = ConfigYesNo(default=False)
-		config.av.hdmipreemphasis.addNotifier(setHDMIpreemphasis)
-
-	if SystemInfo["HasColorimetry"]:
-		def setColorimetry(configElement):
-			open(SystemInfo["HasColorimetry"], "w").write(configElement.value)
-		config.av.hdmicolorimetry = ConfigSelection(default="auto", choices=[
-			("auto", _("Auto")),
-			("bt2020ncl", _("BT 2020 NCL")),
-			("bt2020cl", _("BT 2020 CL")),
-			("bt709", _("BT 709"))
-		])
-		config.av.hdmicolorimetry.addNotifier(setColorimetry)
-
-	if SystemInfo["HasHdrType"]:
-		def setHdmiHdrType(configElement):
-			open(SystemInfo["HasHdrType"], "w").write(configElement.value)
-		config.av.hdmihdrtype = ConfigSelection(default="auto", choices={
-			"auto": _("Auto"),
-			"none": _("SDR"),
-			"hdr10": _("HDR10"),
-			"hlg": _("HLG"),
-			"dolby": _("Dolby")
-		})
-		config.av.hdmihdrtype.addNotifier(setHdmiHdrType)
-
-	if SystemInfo["HDRSupport"]:
-		def setHlgSupport(configElement):
-			open("/proc/stb/hdmi/hlg_support", "w").write(configElement.value)
-		config.av.hlg_support = ConfigSelection(default="auto(EDID)", choices=[
-			("auto(EDID)", _("Controlled by HDMI")),
-			("yes", _("Force enabled")),
-			("no", _("Force disabled"))
-		])
-		config.av.hlg_support.addNotifier(setHlgSupport)
-
-		def setHdr10Support(configElement):
-			open("/proc/stb/hdmi/hdr10_support", "w").write(configElement.value)
-		config.av.hdr10_support = ConfigSelection(default="auto(EDID)", choices=[
-			("auto(EDID)", _("Controlled by HDMI")),
-			("yes", _("Force enabled")),
-			("no", _("Force disabled"))
-		])
-		config.av.hdr10_support.addNotifier(setHdr10Support)
-
-		def setDisable12Bit(configElement):
-			open("/proc/stb/video/disable_12bit", "w").write("on" if configElement.value else "off")
-		config.av.allow_12bit = ConfigYesNo(default=False)
-		config.av.allow_12bit.addNotifier(setDisable12Bit)
-
-		def setDisable10Bit(configElement):
-			open("/proc/stb/video/disable_10bit", "w").write("on" if configElement.value else "off")
-		config.av.allow_10bit = ConfigYesNo(default=False)
-		config.av.allow_10bit.addNotifier(setDisable10Bit)
-
-	if SystemInfo["CanSyncMode"]:
-		def setSyncMode(configElement):
-			print("[UsageConfig] Read /proc/stb/video/sync_mode")
-			open("/proc/stb/video/sync_mode", "w").write(configElement.value)
-		config.av.sync_mode = ConfigSelection(default="slow", choices={
-			"slow": _("Slow motion"),
-			"hold": _("Hold first frame"),
-			"black": _("Black screen")
-		})
-		config.av.sync_mode.addNotifier(setSyncMode)
 
 	config.subtitles = ConfigSubsection()
 	config.subtitles.show = ConfigYesNo(default=True)

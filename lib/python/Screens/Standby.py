@@ -17,7 +17,7 @@ from Tools.Directories import mediaFilesInUse
 from Tools.Notifications import AddNotification
 from time import time, localtime
 from GlobalActions import globalActionMap
-from enigma import eDVBVolumecontrol, eTimer, eDVBLocalTimeHandler, eServiceReference, eStreamServer, quitMainloop, iRecordableService
+from enigma import eDVBVolumecontrol, eTimer, eDVBLocalTimeHandler, eServiceReference, eStreamServer, quitMainloop, iRecordableService, eDBoxLCD
 
 model = BoxInfo.getItem("model")
 brand = BoxInfo.getItem("brand")

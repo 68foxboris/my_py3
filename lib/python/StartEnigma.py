@@ -267,6 +267,8 @@ class Session:
 		self.in_exec = False
 
 		self.screen = SessionGlobals(self)
+		from Components.FrontPanelLed import frontPanelLed
+		frontPanelLed.init(self)
 
 		for p in plugins.getPlugins(PluginDescriptor.WHERE_SESSIONSTART):
 			try:
