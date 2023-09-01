@@ -7,7 +7,7 @@ from usb import busses
 
 from enigma import eActionMap, eDBoxLCD, eTimer
 
-from Components.config import ConfigNothing, ConfigSelection, ConfigSlider, ConfigSubsection, ConfigYesNo, config
+from Components.config import config, ConfigNothing, ConfigSelection, ConfigSlider, ConfigSubsection, ConfigYesNo, ConfigOnOff
 from Components.SystemInfo import BoxInfo, SystemInfo
 from Screens.InfoBar import InfoBar
 from Screens.Screen import Screen
@@ -15,8 +15,8 @@ from Screens.Standby import inTryQuitMainloop
 from Tools.Directories import fileReadLine, fileWriteLine
 
 model = BoxInfo.getItem("model")
+displaytype = BoxInfo.getItem("displaytype")
 platform = BoxInfo.getItem("platform")
-VFDRepeats = BoxInfo.getItem("VFDRepeats")
 
 
 class dummyScreen(Screen):
@@ -439,50 +439,55 @@ def InitLcd():
 		], default="0")
 		if isfile("/sys/module/brcmstb_osmega/parameters/pt6302_cgram"):
 			config.usage.vfd_xcorevfd.addNotifier(setXcoreVFD)
+
 		config.usage.lcd_powerled = ConfigSelection(choices=[
 			("off", _("Off")),
 			("on", _("On"))
 		], default="on")
 		if isfile("/proc/stb/power/powerled"):
 			config.usage.lcd_powerled.addNotifier(setPowerLEDstate)
+
 		config.usage.lcd_powerled2 = ConfigSelection(choices=[
 			("off", _("Off")),
 			("on", _("On"))
 		], default="on")
 		if isfile("/proc/stb/power/powerled2"):
 			config.usage.lcd_powerled2.addNotifier(setPowerLEDstate2)
+
 		config.usage.lcd_standbypowerled = ConfigSelection(choices=[
 			("off", _("Off")),
 			("on", _("On"))
 		], default="on")
 		if isfile("/proc/stb/power/standbyled"):
 			config.usage.lcd_standbypowerled.addNotifier(setPowerLEDstanbystate)
+
 		config.usage.lcd_deepstandbypowerled = ConfigOnOff(default=True)
-		if exists("/proc/stb/power/suspendled"):
+		if isfile("/proc/stb/power/suspendled"):
 			config.usage.lcd_deepstandbypowerled.addNotifier(setPowerLEDdeepstanbystate)
 
-		choices = [("0", _("off")), ("1", _("blue"))] if MACHINEBUILD == "dual" else [("0", _("Off")), ("1", _("blue")), ("2", _("red")), ("3", _("violet"))]
+		choices = [("0", _("off")), ("1", _("blue"))] if model == "dual" else [("0", _("Off")), ("1", _("blue")), ("2", _("red")), ("3", _("violet"))]
 
 		config.usage.lcd_ledpowercolor = ConfigSelection(default="1", choices=choices)
-		if exists("/proc/stb/fp/ledpowercolor"):
+		if isfile("/proc/stb/fp/ledpowercolor"):
 			config.usage.lcd_ledpowercolor.addNotifier(setLedPowerColor)
-		config.usage.lcd_ledstandbycolor = ConfigSelection(default="1" if MACHINEBUILD == "dual" else "3", choices=choices)
-		if exists("/proc/stb/fp/ledstandbycolor"):
+
+		config.usage.lcd_ledstandbycolor = ConfigSelection(default="1" if model == "dual" else "3", choices=choices)
+		if isfile("/proc/stb/fp/ledstandbycolor"):
 			config.usage.lcd_ledstandbycolor.addNotifier(setLedStandbyColor)
-		config.usage.lcd_ledsuspendcolor = ConfigSelection(default="1" if MACHINEBUILD == "dual" else "2", choices=choices)
-		if exists("/proc/stb/fp/ledsuspendledcolor"):
+		config.usage.lcd_ledsuspendcolor = ConfigSelection(default="1" if model == "dual" else "2", choices=choices)
+		if isfile("/proc/stb/fp/ledsuspendledcolor"):
 			config.usage.lcd_ledsuspendcolor.addNotifier(setLedSuspendColor)
 
 		config.usage.lcd_power4x7on = ConfigOnOff(default=True)
-		if exists("/proc/stb/fp/power4x7on"):
+		if isfile("/proc/stb/fp/power4x7on"):
 			config.usage.lcd_power4x7on.addNotifier(setPower4x7On)
 
 		config.usage.lcd_power4x7standby = ConfigOnOff(default=True)
-		if exists("/proc/stb/fp/power4x7standby"):
+		if isfile("/proc/stb/fp/power4x7standby"):
 			config.usage.lcd_power4x7standby.addNotifier(setPower4x7Standby)
 
 		config.usage.lcd_power4x7suspend = ConfigOnOff(default=True)
-		if exists("/proc/stb/fp/power4x7suspend"):
+		if isfile("/proc/stb/fp/power4x7suspend"):
 			config.usage.lcd_power4x7suspend.addNotifier(setPower4x7Suspend)
 
 		if model in ('dm900', 'dm920', 'e4hdultra', 'protek4k'):
@@ -623,7 +628,7 @@ def InitLcd():
 			config.lcd.mode.addNotifier(setLCDmode)
 		else:
 			config.lcd.mode = ConfigNothing()
-		if isfile("/proc/stb/power/vfd") or exists("/proc/stb/lcd/vfd"):
+		if isfile("/proc/stb/power/vfd") or isfile("/proc/stb/lcd/vfd"):
 			def setLCDpower(configElement):
 				ilcd.setPower("1" if configElement.value else "0")
 
