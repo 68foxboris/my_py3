@@ -6830,7 +6830,7 @@ msgid "Edit Mode Off"
 msgstr "Правка выкл"
 
 msgid "Edit Mode On"
-msgstr "Activar edición"
+msgstr "Правка вкл"
 
 msgid "Edit mode off"
 msgstr "Правка вкл"
