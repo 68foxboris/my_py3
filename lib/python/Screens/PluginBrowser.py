@@ -4,6 +4,7 @@ from enigma import checkInternetAccess, eConsoleAppContainer, eDVBDB, eTimer, gR
 from Components.ActionMap import ActionMap, NumberActionMap, HelpableActionMap, HelpableNumberActionMap
 from Screens.HelpMenu import HelpableScreen
 from Components.config import config, ConfigSubsection, ConfigYesNo, ConfigText
+from skin import parseColor
 from Components.GUIComponent import GUIComponent
 from Components.Sources.List import List
 from Components.Harddisk import harddiskmanager
