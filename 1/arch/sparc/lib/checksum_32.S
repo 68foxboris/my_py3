@@ -583,7 +583,7 @@ __csum_partial_copy_end:
 	ret
 	 restore
 
-        .section __ex_table,#alloc
+        .section __ex_table,"a"
         .align 4
         .word 5b,2
 	.word 6b,2

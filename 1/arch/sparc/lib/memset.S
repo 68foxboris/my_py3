@@ -178,7 +178,7 @@ __bzero:
 	 clr	%o0
 __memset_end:
 
-	.section .fixup,#alloc,#execinstr
+	.section .fixup,"ax"
 	.align	4
 20:
 	cmp	%g2, 8
