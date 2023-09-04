@@ -112,7 +112,7 @@
 #endif
 		.endm
 
-		.section .start, "ax"
+		.section ".start", "ax"
 /*
  * sort out different calling conventions
  */
