@@ -57,6 +57,11 @@ std::string CSystemGUIInfo::GetSystemHeatInfo(int info) const
   {
     m_lastSysHeatInfoTime = CTimeUtils::GetFrameTime();
     CServiceBroker::GetCPUInfo()->GetTemperature(m_cpuTemp);
+#if defined(TARGET_STB_EXTEND)
+    m_gpuTemp = m_cpuTemp;
+#else
+    m_gpuTemp = GetGPUTemperature();
+#endif
     if (m_gpuInfo)
     {
       m_gpuInfo->GetTemperature(m_gpuTemp);
