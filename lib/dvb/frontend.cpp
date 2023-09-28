@@ -1318,7 +1318,7 @@ void eDVBFrontend::calculateSignalQuality(int snr, int &signalquality, int &sign
 	{
 		ret = snr;
 	}
-	else if (!strncmp(m_description, "Si2166D", 7)) // S2 - SF8008/HD51/AB Pulse 4K(mini)/GB Trio 4K/Zgemma more models/DM9O0/DM920
+	else if (!strncmp(m_description, "Si2166D", 7)) // S2 - SF8008/HD51/AB Pulse 4K(mini)/GB Trio/IP 4k/Zgemma more models/DM9O0/DM920
 	{
 		ret = snr;
 		sat_max = 1620;
@@ -1510,8 +1510,9 @@ int eDVBFrontend::readFrontendData(int type)
 								if (prop[0].u.st.stat[i].scale == FE_SCALE_RELATIVE)
 									strength = prop[0].u.st.stat[i].uvalue;
 							}
-						}
-					}
+ 						}
+						if (!strength && m_type == iDVBFrontend::feTerrestrial) return strength;
+ 					}
 #endif
 					// fallback to old DVB API
 					if (!strength && ioctl(m_fd, FE_READ_SIGNAL_STRENGTH, &strength) < 0 && errno != ERANGE)
