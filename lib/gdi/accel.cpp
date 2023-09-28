@@ -13,9 +13,12 @@
 #define ACCEL_ALIGNMENT_MASK	((1<<ACCEL_ALIGNMENT_SHIFT)-1)
 
 gAccel *gAccel::instance;
-#define BCM_ACCEL
 
-#ifdef HAVE_HISILICON_ACCEL
+#if not defined(HAVE_HISILICON_ACCEL)
+#define BCM_ACCEL
+#endif
+
+#ifdef HAVE_HISILICON_ACCEL 
 extern int  dinobot_accel_init(void);
 extern void dinobot_accel_close(void);
 extern void dinobot_accel_blit(
@@ -205,7 +208,7 @@ int gAccel::blit(gUnmanagedSurface *dst, gUnmanagedSurface *src, const eRect &p,
 				for (int i = 0; i < src->clut.colors; ++i)
 				    *pal++ = src->clut.data[i].argb() ^ 0xFF000000;
 				src->clut.data_phys = pal_addr;
-				eDebug("[gAccel] HiSilicon pal_addr1 %x clors=%d!",pal_addr,src->clut.colors);
+				eDebug("!!!!!!!!!![gAccel] pal_addr1 %x clors=%d!!!!!!!!!!",pal_addr,src->clut.colors);
 			}
 			else
 			{
@@ -213,7 +216,7 @@ int gAccel::blit(gUnmanagedSurface *dst, gUnmanagedSurface *src, const eRect &p,
 				unsigned long *pal = (unsigned long*)pal_addr;
 				for (int i = 0; i < src->clut.colors; ++i)
 				    *pal++ = src->clut.data[i].argb() ^ 0xFF000000;
-				eDebug("[gAccel] HiSilicon pal_addr2 %x clors=%d!",pal_addr,src->clut.colors);
+				eDebug("!!!!!!!!!![gAccel] pal_addr2 %x clors=%d!!!!!!!!!!",pal_addr,src->clut.colors);
 			}
 		} else
 			return -1; /* unsupported source format */
