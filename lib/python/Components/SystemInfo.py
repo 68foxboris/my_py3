@@ -301,7 +301,7 @@ else:
 BoxInfo.setItem("RemoteRepeat", repeat)
 BoxInfo.setItem("RemoteDelay", 200 if model in ("maram9", "axodin") else 700)
 BoxInfo.setItem("have24hz", eAVControl.getInstance().has24hz())
-
+BoxInfo.setItem("hashdmiin", BoxInfo.getItem("hdmifhdin") or BoxInfo.getItem("hdmihdin"))
 BoxInfo.setItem("HDMI-PreEmphasis", fileCheck("/proc/stb/hdmi/preemphasis"))
 
 try:
