@@ -1,4 +1,4 @@
-from Components.SystemInfo import SystemInfo
+from Components.SystemInfo import SystemInfo, BoxInfo
 from Components.Console import Console
 from Tools.Directories import fileHas, fileExists
 import os
