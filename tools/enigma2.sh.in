@@ -40,6 +40,8 @@ while : ; do
 	if [ -x @bindir@/enigma2_pre_start.sh ]; then
 		@bindir@/enigma2_pre_start.sh
 	fi
+# in case sysctl.conf is not properly loaded - load sysctl.conf here again...
+sysctl -p
 
 # Randomize timestamp if clock is not set
 RANDOMIZE1970=''
