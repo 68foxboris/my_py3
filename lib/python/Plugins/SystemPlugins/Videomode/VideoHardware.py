@@ -127,7 +127,7 @@ class VideoHardware:
 		modes["HDMI"] = ["720p", "1080i", "576p", "576i", "480p", "480i"]
 		widescreen_modes = {"720p", "1080i"}
 
-	modes["DVI-PC"] = ["PC"]
+	modes["HDMI-PC"] = ["PC"]
 
 	if BoxInfo.getItem("yuv"):
 		modes["YPbPr"] = modes["HDMI"]
@@ -165,12 +165,18 @@ class VideoHardware:
 					if aspect == "16:10":
 						ret = (16, 10)
 			elif is_auto:
-				try:
-					aspect_str = open("/proc/stb/vmpeg/0/aspect").read()
-					if aspect_str == "1":  # 4:3
-						ret = (4, 3)
-				except Exception:
-					pass
+				if isfile("/proc/stb/vmpeg/0/aspect"):
+					try:
+						aspect_str = open("/proc/stb/vmpeg/0/aspect", "r").read()
+					except IOError:
+						print("[VideoHardware] Read /proc/stb/vmpeg/0/aspect failed!")
+				elif isfile("/sys/class/video/screen_mode"):
+					try:
+						aspect_str = open("/sys/class/video/screen_mode", "r").read()
+					except IOError:
+						print("[VideoHardware] Read /sys/class/video/screen_mode failed!")
+				if aspect_str == "1": # 4:3
+					ret = (4, 3)
 			else:  # 4:3
 				ret = (4, 3)
 		return ret

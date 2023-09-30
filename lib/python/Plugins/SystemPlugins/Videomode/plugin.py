@@ -1,6 +1,6 @@
 from Screens.Screen import Screen
 from Plugins.Plugin import PluginDescriptor
-from Components.SystemInfo import SystemInfo
+from Components.SystemInfo import SystemInfo, BoxInfo
 from Components.ConfigList import ConfigListScreen
 from Components.config import config, ConfigBoolean, ConfigNothing
 from Components.Label import Label
@@ -27,7 +27,7 @@ class VideoSetup(ConfigListScreen, Screen):
 		self.onHide.append(self.stopHotplug)
 
 		self.list = []
-		ConfigListScreen.__init__(self, self.list, session=session)
+		ConfigListScreen.__init__(self, self.list, session=session, on_change=self.createSetup)
 
 		from Components.ActionMap import ActionMap
 		self["actions"] = ActionMap(["SetupActions", "MenuActions"],
@@ -88,7 +88,7 @@ class VideoSetup(ConfigListScreen, Screen):
 		elif config.av.aspect.value == "4_3":
 			self.list.append((_("Display 16:9 content as"), config.av.policy_169, _("When the content has an aspect ratio of 16:9, choose whether to scale/stretch the picture.")))
 
-		if config.av.videoport.value in ("DVI", "HDMI"):
+		if config.av.videoport.value == "HDMI":
 			if level >= 1:
 				self.list.append((_("Allow unsupported modes"), config.av.edid_override, _("When selected this allows video modes to be selected even if they are not reported as supported.")))
 				if SystemInfo["HasBypassEdidChecking"]:
