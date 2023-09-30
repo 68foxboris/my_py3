@@ -20,7 +20,7 @@ from GlobalActions import globalActionMap
 from enigma import eDVBVolumecontrol, eTimer, eDVBLocalTimeHandler, eServiceReference, eStreamServer, quitMainloop, iRecordableService
 
 model = BoxInfo.getItem("model")
-AmlogicFamily = BoxInfo.getItem("AmlogicFamily")
+brand = BoxInfo.getItem("brand")
 LCDMiniTV = BoxInfo.getItem("LCDMiniTV")
 
 inStandby = None
