@@ -1,66 +1,13 @@
 #!/bin/sh
 
-prefix="@prefix@"
-exec_prefix="@exec_prefix@"
-datarootdir="@datarootdir@"
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+datarootdir=@datarootdir@
 
-if [ -d "/home/root" ]; then
-	export HOME="/home/root"
-	cd
+if [ -d /home/root ]; then
+	cd /home/root
+	export HOME=/home/root
 fi
-
-# LC_ALL available?
-if [ -z $LC_ALL ]; then
-	export LC_ALL=en_GB.utf8
-fi
-
-BRANDCHECK=`sed -En 's|^brand=(.+)$|\1|p' /usr/lib/enigma.info`
-PLATFORMCHECK=`sed -En 's|^platform=(.+)$|\1|p' /usr/lib/enigma.info`
-
-
-if [ -f "@bindir@/libreader" ]; then
-	COUNT=`ps -ef | grep libreader | grep -v "grep" | wc -l`
-	if [ "${COUNT}" -eq "0" ];then
-		@bindir@/libreader 720P_50
-	fi
-fi
-
-if [ -f "/proc/stb/fp/led_color" ]; then
-	echo "00ffffff" > /proc/stb/fp/led_color
-elif [ -f "/proc/stb/fp/led_brightness" ]; then
-	echo "000000ff" > /proc/stb/fp/led_brightness
-fi
-
-# Show backdrop on enigma2 start.
-if [ -x "@bindir@/showiframe" ]; then
-	if [ -e /proc/stb/info/boxtype ]; then
-		stbcheck=`cat /proc/stb/info/boxtype | cut -c1-2`
-		if [ ! $stbcheck == "u5" ] && [ ! $stbcheck == "u4" ]; then
-			killall -9 showiframe; sleep 1
-		fi
-	else
-		killall -9 showiframe; sleep 1
-	fi
-	SKIN=`sed -En 's|^config\.skin\.primary_skin=(.+)/skin\.xml$|\1|p' "@sysconfdir@/enigma2/settings"`
-	if [ -n "${SKIN}" ]; then
-		SEARCHDIRS="@sysconfdir@/enigma2/$SKIN @sysconfdir@/enigma2/skin_common @sysconfdir@/enigma2 @datadir@/enigma2/$SKIN @datadir@/enigma2/skin_default @datadir@/enigma2 @datadir@"
-	else
-		SEARCHDIRS="@sysconfdir@/enigma2/skin_common @sysconfdir@/enigma2 @datadir@/enigma2/skin_default @datadir@/enigma2 @datadir@"
-	fi
-	for DIR in $SEARCHDIRS; do
-		if [ -d "${DIR}" ] && [ -f "${DIR}/backdrop.mvi" ]; then
-			"@bindir@/showiframe" "${DIR}/backdrop.mvi"
-			break
-		fi
-	done
-fi
-
-# hook to execute scripts always before enigma2 start
-if [ -x @bindir@/enigma2_pre_start.sh ]; then
-	@bindir@/enigma2_pre_start.sh
-fi
-
-LIBS=@libdir@/libopen.so.0.0.0
 
 # any debuglevel passed?
 if [ -z $ENIGMA_DEBUG_LVL ]; then
@@ -69,6 +16,31 @@ else
 	DEBUG_LVL=$ENIGMA_DEBUG_LVL
 fi
 
+# LC_ALL available?
+if [ -z $LC_ALL ]; then
+	export LC_ALL=en_GB.utf8
+fi
+
+LIBS=@libdir@/libopen.so.0.0.0
+
+# enigma main loop
+while : ; do
+	# show bootlogo on enigma2 start
+	if [ -x @bindir@/showiframe ]; then
+		if [ -f @sysconfdir@/enigma2/backdrop.mvi ]; then
+			@bindir@/showiframe @sysconfdir@/enigma2/backdrop.mvi
+		elif [ -f @sysconfdir@/enigma2/bootlogo.mvi ]; then
+			@bindir@/showiframe @sysconfdir@/enigma2/bootlogo.mvi
+		elif [ -f @datadir@/bootlogo.mvi ]; then
+			@bindir@/showiframe @datadir@/bootlogo.mvi
+		fi
+	fi
+
+	# hook to execute scripts always before enigma2 start
+	if [ -x @bindir@/enigma2_pre_start.sh ]; then
+		@bindir@/enigma2_pre_start.sh
+	fi
+
 # Randomize timestamp if clock is not set
 RANDOMIZE1970=''
 time=`date +%Y` ;
@@ -76,6 +48,8 @@ if [ "$time" = 1970 ]; then
 	RANDOMIZE1970="$(strings /dev/urandom | grep -o '[[:alnum:]]' | head -n 5 | tr -d '\n')"
 fi
 
+# start enigma
+sync
 # Set time format used to prefix each line in the debug logs.
 DEBUGTIME=`sed -En 's|^config\.crash\.debugTimeFormat=(.+)$|\1|p' "@sysconfdir@/enigma2/settings"`
 [ -n "${DEBUGTIME}" ] || DEBUGTIME="2"
