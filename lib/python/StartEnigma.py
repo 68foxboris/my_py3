@@ -14,7 +14,6 @@ import eBaseImpl
 enigma.eTimer = eBaseImpl.eTimer
 enigma.eSocketNotifier = eBaseImpl.eSocketNotifier
 enigma.eConsoleAppContainer = eConsoleImpl.eConsoleAppContainer
-from Components.config import config, configfile, ConfigText, ConfigYesNo, ConfigInteger, ConfigSelection, ConfigSubsection, NoSave
 from Components.SystemInfo import BoxInfo, SystemInfo
 
 from traceback import print_exc
@@ -65,6 +64,7 @@ from Screens.SimpleSummary import SimpleSummary
 from sys import stdout
 
 profile("Bouquets")
+from Components.config import config, configfile, ConfigText, ConfigYesNo, ConfigInteger, ConfigSelection, ConfigSubsection, NoSave
 config.misc.load_unlinked_userbouquets = ConfigYesNo(default=True)
 
 
@@ -293,11 +293,7 @@ class Session:
 			callback(*retval)
 
 	def execBegin(self, first=True, do_show=True):
-		try:
-			if self.in_exec:
-				print("already in exec")
-		except AssertionError as err:
-			print(err)
+		assert not self.in_exec
 		self.in_exec = True
 		c = self.current_dialog
 
@@ -411,11 +407,7 @@ class Session:
 		# after close of the top dialog, the underlying will
 		# gain focus again (for a short time), thus triggering
 		# the onExec, which opens the dialog again, closing the loop.
-		try:
-			if not screen == self.current_dialog:
-				print("Attempt to close non-current screen")
-		except AssertionError as err:
-			print(err)
+		assert screen == self.current_dialog
 
 		self.current_dialog.returnValue = retval
 		self.delay_timer.start(0, 1)
