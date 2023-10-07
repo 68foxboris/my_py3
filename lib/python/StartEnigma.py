@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import sys
-import os
-from time import time
 from Tools.Profile import profile, profile_final
 profile("PYTHON_START")
 
@@ -17,7 +15,10 @@ enigma.eConsoleAppContainer = eConsoleImpl.eConsoleAppContainer
 from Components.config import config, configfile, ConfigText, ConfigYesNo, ConfigInteger, ConfigSelection, ConfigSubsection, NoSave
 from Components.SystemInfo import BoxInfo, SystemInfo
 
+from os.path import isdir, islink, join
 from traceback import print_exc
+from time import time
+from sys import stdout
 
 model = BoxInfo.getItem("model")
 brand = BoxInfo.getItem("brand")
@@ -62,15 +63,16 @@ profile("SimpleSummary")
 from Screens import InfoBar
 from Screens.SimpleSummary import SimpleSummary
 
-from sys import stdout
+def setEPGCachePath(configElement):
+	if isdir(configElement.value) or islink(configElement.value):
+		configElement.value = join(configElement.value, "epg.dat")
+	enigma.eEPGCache.getInstance().setCacheFile(configElement.value)
 
 profile("Bouquets")
 config.misc.load_unlinked_userbouquets = ConfigYesNo(default=True)
 
-
 def setLoadUnlinkedUserbouquets(configElement):
 	enigma.eDVBDB.getInstance().setLoadUnlinkedUserbouquets(configElement.value)
-
 
 config.misc.load_unlinked_userbouquets.addNotifier(setLoadUnlinkedUserbouquets)
 enigma.eDVBDB.getInstance().reloadBouquets()
@@ -107,21 +109,16 @@ config.misc.SyncTimeUsing = ConfigSelection(default="0", choices=[
 ])
 config.misc.NTPserver = ConfigText(default="pool.ntp.org", fixed_size=False)
 
-def setEPGCachePath(configElement):
-	if os.path.isdir(configElement.value) or os.path.islink(configElement.value):
-		configElement.value = os.path.join(configElement.value, "epg.dat")
-	enigma.eEPGCache.getInstance().setCacheFile(configElement.value)
+# demo code for use of standby enter leave callbacks
+# def leaveStandby():
+# print("!!!!!!!!!!!!!!!!!leave standby")
 
-#demo code for use of standby enter leave callbacks
-#def leaveStandby():
-#	print("!!!!!!!!!!!!!!!!!leave standby")
+# def standbyCountChanged(configElement):
+# print("!!!!!!!!!!!!!!!!!enter standby num", configElement.value)
+# from Screens.Standby import inStandby
+# inStandby.onClose.append(leaveStandby)
 
-#def standbyCountChanged(configElement):
-#	print("!!!!!!!!!!!!!!!!!enter standby num", configElement.value)
-#	from Screens.Standby import inStandby
-#	inStandby.onClose.append(leaveStandby)
-
-#config.misc.standbyCounter.addNotifier(standbyCountChanged, initial_call = False)
+# config.misc.standbyCounter.addNotifier(standbyCountChanged, initial_call = False)
 ####################################################
 
 profile("Twisted")
@@ -150,18 +147,6 @@ try:  # Configure the twisted logging
 			return
 		if "/api/statusinfo" in text:  # do not log OWF statusinfo
 			return
-		# Log with time stamp.
-		#
-		# timeStr = self.formatTime(eventDict["time"])
-		# fmtDict = {
-		# 	"ts": timeStr,
-		# 	"system": eventDict["system"],
-		# 	"text": text.replace("\n", "\n\t")
-		# }
-		# msgStr = log._safeFormat("%(ts)s [%(system)s] %(text)s\n", fmtDict)
-		#
-		# Log without time stamp.
-		#
 		fmtDict = {
 			"text": text.replace("\n", "\n\t")
 		}
@@ -196,7 +181,6 @@ from Plugins.Plugin import PluginDescriptor
 profile("misc")
 had = dict()
 
-
 def dump(dir, p=""):
 	if isinstance(dir, dict):
 		for (entry, val) in dir.items():
@@ -215,7 +199,6 @@ def dump(dir, p=""):
 
 # display
 
-
 profile("LOAD:ScreenGlobals")
 from Screens.Globals import Globals
 from Screens.SessionGlobals import SessionGlobals
@@ -227,24 +210,24 @@ Screen.globalScreen = Globals()
 # Session.open:
 # * push current active dialog ('current_dialog') onto stack
 # * call execEnd for this dialog
-#   * clear in_exec flag
-#   * hide screen
+# * clear in_exec flag
+# * hide screen
 # * instantiate new dialog into 'current_dialog'
-#   * create screens, components
-#   * read, apply skin
-#   * create GUI for screen
+# * create screens, components
+# * read, apply skin
+# * create GUI for screen
 # * call execBegin for new dialog
-#   * set in_exec
-#   * show gui screen
-#   * call components' / screen's onExecBegin
+# * set in_exec
+# * show gui screen
+# * call components' / screen's onExecBegin
 # ... screen is active, until it calls 'close'...
 # Session.close:
 # * assert in_exec
 # * save return value
 # * start deferred close handler ('onClose')
 # * execEnd
-#   * clear in_exec
-#   * hide screen
+# * clear in_exec
+# * hide screen
 # .. a moment later:
 # Session.doClose:
 # * destroy screen
@@ -283,7 +266,7 @@ class Session:
 
 		if self.current_dialog.isTmp:
 			self.current_dialog.doClose()
-#			dump(self.current_dialog)
+			# dump(self.current_dialog)
 			del self.current_dialog
 		else:
 			del self.current_dialog.callback
@@ -434,7 +417,6 @@ class Session:
 		if self.summary:
 			self.summary.show()
 
-
 profile("Standby,PowerKey")
 import Screens.Standby
 from Screens.Menu import MainMenu, mdom
@@ -452,6 +434,13 @@ class PowerKey:
 		globalActionMap.actions["deepstandby"] = self.shutdown  # Front panel long power button press.
 		globalActionMap.actions["discrete_off"] = self.standby
 
+	def shutdown(self):
+		print("[StartEnigma] Power off, now!")
+		if not Screens.Standby.inTryQuitMainloop and self.session.current_dialog and self.session.current_dialog.ALLOW_SUSPEND:
+			self.session.open(Screens.Standby.TryQuitMainloop, 1)
+		else:
+			return 0
+
 	def powerup(self):
 		if not Screens.Standby.inStandby and self.session.current_dialog and self.session.current_dialog.ALLOW_SUSPEND and self.session.in_exec:
 			self.doAction(config.misc.hotkey.power.value)
@@ -461,19 +450,6 @@ class PowerKey:
 	def powerlong(self):
 		if not Screens.Standby.inStandby and self.session.current_dialog and self.session.current_dialog.ALLOW_SUSPEND and self.session.in_exec:
 			self.doAction(config.misc.hotkey.power_long.value)
-		else:
-			return 0
-
-	def shutdown(self):
-		print("[StartEnigma] Power off, now!")
-		if not Screens.Standby.inTryQuitMainloop and self.session.current_dialog and self.session.current_dialog.ALLOW_SUSPEND:
-			self.session.open(Screens.Standby.TryQuitMainloop, 1)  # Shutdown
-		else:
-			return 0
-
-	def standby(self):
-		if not Screens.Standby.inStandby and self.session.current_dialog and self.session.current_dialog.ALLOW_SUSPEND and self.session.in_exec:
-			self.session.open(Screens.Standby.Standby)
 		else:
 			return 0
 
@@ -487,7 +463,6 @@ class PowerKey:
 				except:
 					print("[StartEnigma] Error during executing module %s, screen %s" % (selected[1], selected[2]))
 			elif selected[0] == "Menu":
-				from Screens.Menu import MainMenu, mdom
 				root = mdom.getroot()
 				for x in root.findall("menu"):
 					y = x.find("id")
@@ -496,10 +471,16 @@ class PowerKey:
 						if id and id == selected[1]:
 							self.session.open(MainMenu, x)
 
+	def standby(self):
+		if not Screens.Standby.inStandby and self.session.current_dialog and self.session.current_dialog.ALLOW_SUSPEND and self.session.in_exec:
+			self.session.open(Screens.Standby.Standby)
+		else:
+			return 0
 
-
-profile("Scart")
-from Screens.Scart import Scart
+if enigma.eAVControl.getInstance().hasScartSwitch():
+	profile("Scart")
+	print("[StartEnigma] Initialising Scart module")
+	from Screens.Scart import Scart
 
 
 class AutoScartControl:
@@ -519,22 +500,19 @@ class AutoScartControl:
 		self.VCRSbChanged(self.current_vcr_sb)
 
 	def VCRSbChanged(self, value):
-		if self.hasScart:
-			# print("[StartEnigma] VCR SB changed to '%s'." % value)
-			self.current_vcr_sb = value
-			if config.av.vcrswitch.value or value > 2:
-				if value:
-					self.scartDialog.showMessageBox()
-				else:
-					self.scartDialog.switchToTV()
-
+		# print("vcr sb changed to", value)
+		self.current_vcr_sb = value
+		if config.av.vcrswitch.value or value > 2:
+			if value:
+				self.scartDialog.showMessageBox()
+			else:
+				self.scartDialog.switchToTV()
 
 profile("Load:CI")
 from Screens.Ci import CiHandler
 
 profile("Load:VolumeControl")
 from Components.VolumeControl import VolumeControl
-
 
 profile("Load:Processing")
 from Screens.Processing import Processing
@@ -565,9 +543,7 @@ def runScreenTest():
 	screensToRun += wizardManager.getWizards()
 
 	screensToRun.append((100, InfoBar.InfoBar))
-
-	screensToRun.sort(key=lambda x: x[0])
-
+	# screensToRun.sort(key=lambda x: x[0])  # works in both Pythons but let's not use sort method here first we must see if we have work network in the wizard.
 	enigma.ePythonConfigQuery.setQueryFunc(configfile.getResolvedKey)
 
 	def runNextScreen(session, screensToRun, *result):
@@ -600,7 +576,7 @@ def runScreenTest():
 		Components.VfdSymbols.SymbolsCheck(session)
 
 	# we need session.scart to access it from within menu.xml
-	session.scart = AutoScartControl(session)
+	session.scart = AutoScartControl(session) if enigma.eAVControl.getInstance().hasScartSwitch() else None
 
 	profile("Init:Trashcan")
 	import Tools.Trashcan
@@ -654,21 +630,20 @@ def runScreenTest():
 
 	return 0
 
-
 profile("Skin")
 from skin import InitSkins
 InitSkins()
 
 profile("InputDevice")
-from Components.InputDevice import InitInputDevices
-InitInputDevices()
+import Components.InputDevice
+Components.InputDevice.InitInputDevices()
 
 profile("Hotplug")
 import Components.InputHotplug
 
 profile("AVSwitch")
-from Components.AVSwitch import InitAVSwitch
-InitAVSwitch()
+import Components.AVSwitch
+Components.AVSwitch.InitAVSwitch()
 
 profile("HdmiRecord")
 import Components.HdmiRecord
@@ -704,9 +679,9 @@ import Components.Network
 Components.Network.waitForNetwork()
 
 profile("LCD")
-from Components.Lcd import IconCheck, InitLcd
-InitLcd()
-IconCheck()
+import Components.Lcd
+Components.Lcd.InitLcd()
+Components.Lcd.IconCheck()
 
 enigma.eAVControl.getInstance().disableHDMIIn()
 

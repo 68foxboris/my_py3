@@ -1,13 +1,9 @@
 #!/bin/sh
 
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-datarootdir=@datarootdir@
+prefix="@prefix@"
+exec_prefix="@exec_prefix@"
+datarootdir="@datarootdir@"
 
-if [ -d /home/root ]; then
-	cd /home/root
-	export HOME=/home/root
-fi
 
 # any debuglevel passed?
 if [ -z $ENIGMA_DEBUG_LVL ]; then
@@ -19,6 +15,11 @@ fi
 # LC_ALL available?
 if [ -z $LC_ALL ]; then
 	export LC_ALL=en_GB.utf8
+fi
+
+if [ -d /home/root ]; then
+	export HOME="/home/root"
+	cd
 fi
 
 LIBS=@libdir@/libopen.so.0.0.0
