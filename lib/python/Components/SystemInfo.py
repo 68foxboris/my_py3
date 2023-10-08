@@ -33,7 +33,7 @@ class BoxInformation:  # To maintain data integrity class variables should not b
 				if line.startswith("#") or line.strip() == "":
 					continue
 				if "=" in line:
-					item, value = (x.strip() for x in line.split("=", 1))
+					item, value = [x.strip() for x in line.split("=", 1)]
 					if item:
 						self.immutableList.append(item)
 						self.enigmaInfoList.append(item)
@@ -51,7 +51,7 @@ class BoxInformation:  # To maintain data integrity class variables should not b
 				if line.startswith("#") or line.strip() == "":
 					continue
 				if "=" in line:
-					item, value = (x.strip() for x in line.split("=", 1))
+					item, value = [x.strip() for x in line.split("=", 1)]
 					if item:
 						self.enigmaConfList.append(item)
 						if item in self.boxInfo:
@@ -66,7 +66,7 @@ class BoxInformation:  # To maintain data integrity class variables should not b
 		data = []
 		for line in lines:
 			if line.startswith("checksum"):
-				item, value = (x.strip() for x in line.split("=", 1))
+				item, value = [x.strip() for x in line.split("=", 1)]
 			else:
 				data.append(line)
 		data.append("")
@@ -164,7 +164,6 @@ from Tools.Multiboot import getMultibootStartupDevice, getMultibootslots  # This
 def getBoxDisplayName():  # This function returns a tuple like ("BRANDNAME", "BOXNAME")
 	return (DISPLAYBRAND, DISPLAYMODEL)
 
-
 # Parse the boot commandline.
 cmdline = fileReadLine("/proc/cmdline", source=MODULE_NAME)
 cmdline = {k: v.strip('"') for k, v in findall(r'(\S+)=(".*?"|\S+)', cmdline)}
@@ -175,14 +174,6 @@ def getDemodVersion():
 	if exists("/proc/stb/info/nim_firmware_version"):
 		version = fileReadLine("/proc/stb/info/nim_firmware_version")
 	return version and version.strip()
-
-
-
-def getRCFile(ext):
-	filename = resolveFilename(SCOPE_SKIN, pathjoin("rc_models", "%s.%s" % (BoxInfo.getItem("rcname"), ext)))
-	if not isfile(filename):
-		filename = resolveFilename(SCOPE_SKIN, pathjoin("rc_models", "dmm1.%s" % ext))
-	return filename
 
 
 def getNumVideoDecoders():
@@ -209,6 +200,13 @@ def getBootdevice():
 	while dev and not exists("/sys/block/%s" % dev):
 		dev = dev[:-1]
 	return dev
+
+
+def getRCFile(ext):
+	filename = resolveFilename(SCOPE_SKIN, pathjoin("rc_models", "%s.%s" % (BoxInfo.getItem("rcname"), ext)))
+	if not isfile(filename):
+		filename = resolveFilename(SCOPE_SKIN, pathjoin("rc_models", "dmm1.%s" % ext))
+	return filename
 
 
 def getChipsetString():
@@ -301,6 +299,7 @@ else:
 BoxInfo.setItem("RemoteRepeat", repeat)
 BoxInfo.setItem("RemoteDelay", 200 if model in ("maram9", "axodin") else 700)
 BoxInfo.setItem("have24hz", eAVControl.getInstance().has24hz())
+BoxInfo.setItem("hashdmiin", BoxInfo.getItem("hdmifhdin") or BoxInfo.getItem("hdmihdin"))
 
 BoxInfo.setItem("HDMI-PreEmphasis", fileCheck("/proc/stb/hdmi/preemphasis"))
 
@@ -376,7 +375,7 @@ SystemInfo["3DZNorm"] = fileCheck("/proc/stb/fb/znorm") or fileCheck("/proc/stb/
 SystemInfo["Blindscan_t2_available"] = fileCheck("/proc/stb/info/vumodel")
 SystemInfo["RcTypeChangable"] = not (model in ("gbquad4k", "gbue4k", "et8500") or model.startswith("et7")) and fileCheck("/proc/stb/ir/rc/type")
 SystemInfo["HasFullHDSkinSupport"] = model not in ("et4000", "et5000", "sh1", "hd500c", "hd1100", "xp1000", "lc")
-SystemInfo["HasMMC"] = "root" in cmdline and cmdline["root"].startswith("/dev/mmcblk")
+SystemInfo["HasMMC"] = BoxInfo.getItem("mmc") or "root" in cmdline and cmdline["root"].startswith("/dev/mmcblk") if isfile("/proc/cmdline") else "mmcblk" in mtdkernel
 SystemInfo["HasTranscoding"] = BoxInfo.getItem("transcoding") or BoxInfo.getItem("multitranscoding") or fileCheck("/proc/stb/encoder/0") or fileCheck("/dev/bcm_enc0")
 SystemInfo["HasH265Encoder"] = fileContains("/proc/stb/encoder/0/vcodec_choices", "h265")
 SystemInfo["CanNotDoSimultaneousTranscodeAndPIP"] = model in ("vusolo4k", "gbquad4k", "gbue4k")
@@ -425,7 +424,8 @@ SystemInfo["NCamIsActive"] = SystemInfo["NCamInstalled"] and fileCheck("/tmp/.nc
 SystemInfo["OLDE2API"] = model == "dm800"
 SystemInfo["7segment"] = displaytype == "7segment" or "7seg" in displaytype
 SystemInfo["textlcd"] = displaytype == "textlcd" or "text" in displaytype
-SystemInfo["HiSilicon"] = pathExists("/proc/hisi") or fileExists("/usr/bin/hihalt")
+SystemInfo["HasHiSi"] = pathExists("/proc/hisi")
+SystemInfo["HiSilicon"] = socfamily.startswith("hisi") or exists("/proc/hisi") or isfile("/usr/bin/hihalt") or exists("/usr/lib/hisilicon")
 SystemInfo["DefineSat"] = platform in ("octagonhisil", "octagonhisilnew", "gbmv200", "uclanhisil") or model in ("beyonwizv2", "viper4k")
 SystemInfo["AmlogicFamily"] = socfamily.startswith(("aml", "meson")) or fileCheck("/proc/device-tree/amlogic-dt-id") or isfile("/usr/bin/amlhalt") or exists("/sys/module/amports")
 SystemInfo["RecoveryMode"] = fileCheck("/proc/stb/fp/boot_mode") and model not in ("hd51", "h7") or platform == "dmamlogic"
