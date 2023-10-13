@@ -34,6 +34,9 @@
 #include <OpenGLES/ES2/glext.h>
 #endif
 #else
+#elif defined(TARGET_V3DNXPL)
+#include <GLES3/gl31.h>
+#include <GLES2/gl2ext.h>
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #if HAS_GLES == 3
