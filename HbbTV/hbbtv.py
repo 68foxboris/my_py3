@@ -1,9 +1,7 @@
 from __future__ import absolute_import
 from Screens.Screen import Screen
-from Screens.ChannelSelection import ChannelSelection
 from Components.ActionMap import ActionMap
-from enigma import eTimer, eServiceReference
-from boxbranding import getMachineBuild
+from enigma import eTimer
 
 import os, struct
 from . import vbcfg
@@ -29,10 +27,6 @@ class HbbTVWindow(Screen):
 		elif (self.height < 576):
 			self.height = 576
 
-		if getMachineBuild() in ('pulse4k', 'pulse4kmini', 'h9', 'h9combo', 'h9combose', 'h9se', 'h10', 'h8', 'hzero', 'i55', 'i55plus', 'i55se', 'hd60', 'hd61', 'multibox', 'multiboxse'):
-			self.width=1280
-			self.height=720
-
 		vbcfg.g_vmpegposition = vbcfg.getvmpegPosition()
 		vbcfg.g_position = vbcfg.getPosition()
 		vbcfg.osd_lock()
@@ -41,9 +35,6 @@ class HbbTVWindow(Screen):
 
 		self._url = url
 		self._info = app_info
-
-		if getMachineBuild() in ('dags7252'):
-			self.servicelist = self.session.instantiateDialog(ChannelSelection)
 
 		self.onLayoutFinish.append(self.start_hbbtv_application)
 
@@ -122,16 +113,9 @@ class HbbTVWindow(Screen):
 		vbcfg.osd_unlock()
 		dsk.paint()
 
-		if getMachineBuild() not in ('dags7252'):
-			vbcfg.set_bgcolor("0")
+		vbcfg.set_bgcolor("0")
 		vbcfg.DEBUG("Stop HbbTV")
-
 		os.system("run.sh stop")
-
-		if getMachineBuild() in ('dags7252'):
-			cur_channel = self.servicelist.getCurrentSelection()
-			cur_channel = cur_channel.toString()
-			self.session.nav.playService(eServiceReference(cur_channel))
 
 		self.close()
 
