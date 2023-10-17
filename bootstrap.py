@@ -129,7 +129,7 @@ def main(argv):
     if not options.debug:
       gn_gen_args += ' is_debug=false'
     subprocess.check_call([
-        gn_path, 'gen', out_dir,
+        gn_path, 'gen', out_dir, ' --script-executable=/usr/bin/python3',
         '--args=%s' % gn_gen_args, "--root=" + SRC_ROOT
     ])
 
