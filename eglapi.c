@@ -2814,8 +2814,8 @@ eglGetProcAddress(const char *procname)
          ret = entrypoint->function;
    }
 
-   if (!ret)
-      ret = _glapi_get_proc_address(procname);
+//   if (!ret)
+//      ret = _glapi_get_proc_address(procname);
 
    RETURN_EGL_SUCCESS(NULL, ret);
 }
