@@ -45,7 +45,7 @@
 #include <GL/internal/dri_interface.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include "dri_screen.h"
+#include <gallium/frontends/dri/dri_screen.h>"
 
 #ifdef HAVE_WAYLAND_PLATFORM
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
@@ -139,7 +139,7 @@ dri_set_background_context(void *loaderPrivate)
 static void
 dri2_gl_flush_get(_glapi_proc *glFlush)
 {
-   *glFlush = _glapi_get_proc_address("glFlush");
+//   *glFlush = _glapi_get_proc_address("glFlush");
 }
 
 static void
