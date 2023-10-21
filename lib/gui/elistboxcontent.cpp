@@ -124,42 +124,7 @@ int eListboxPythonStringContent::currentCursorSelectable()
 }
 
 void eListboxPythonStringContent::cursorSave()
-{int eListboxPythonStringContent::getMaxItemTextWidth()
 {
-	ePtr<gFont> fnt;
-	eListboxStyle *local_style = 0;
-	int m_text_offset = 1;
-	if (m_listbox)
-		local_style = m_listbox->getLocalStyle();
-	if (local_style) {
-		fnt = local_style->m_font;
-		m_text_offset = local_style->m_text_offset.x();
-	}
-	if (!fnt) fnt = new gFont("Regular", 20);
-
-	for (int i = 0; i < size(); i++)
-	{
-		ePyObject item = PyList_GET_ITEM(m_list, i);
-		if (PyTuple_Check(item))
-		{
-			item = PyTuple_GET_ITEM(item, 0);
-		}
-		if (item != Py_None) {
-			const char *string = PyUnicode_Check(item) ? PyUnicode_AsUTF8(item) : "<not-a-string>";
-			eRect textRect = eRect(0,0, 8000, 100);
-
-			ePtr<eTextPara> para = new eTextPara(textRect);
-			para->setFont(fnt);
-			para->renderString(string);
-			int textWidth = para->getBoundBox().width();
-			if (textWidth > m_max_text_width) {
-				m_max_text_width = textWidth;
-			}
-		}
-	}
-
-	return m_max_text_width + (m_text_offset*2);
-}
 	m_saved_cursor = m_cursor;
 }
 
@@ -1135,7 +1100,7 @@ int eListboxPythonMultiContent::getMaxItemTextWidth()
 
 					if (pfnt) {
 						int fnt_i = PyLong_AsLong(pfnt);
-						if (m_font.find(fnt_i) != m_font.end()) fnt = m_font[fnt_i];
+						if (m_fonts.find(fnt_i) != m_fonts.end()) fnt = m_fonts[fnt_i];
 					}
 
 								/* don't do anything if we have 'None' as string */
