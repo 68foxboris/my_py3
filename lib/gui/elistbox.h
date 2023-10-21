@@ -316,7 +316,6 @@ public:
 	void setValueFont(gFont *font) { m_style.m_valuefont = font; }
 	void setVAlign(int align) { m_style.m_valign = align; }
 	void setHAlign(int align) { m_style.m_halign = align; }
-	void setTextOffset(const ePoint &textoffset);
 	void setTextPadding(const eRect &padding) { m_style.m_text_padding = padding; }
 	void setUseVTIWorkaround(void) { m_style.is_set.use_vti_workaround = 1; }
 
