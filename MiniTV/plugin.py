@@ -2,7 +2,7 @@ from Plugins.Plugin import PluginDescriptor
 from Components.PluginComponent import plugins
 from Screens.Screen import Screen
 from Components.ConfigList import ConfigListScreen
-from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigSelection, ConfigInteger
+from Components.config import config, ConfigSubsection, ConfigSelection, ConfigInteger
 from Components.ActionMap import ActionMap,NumberActionMap
 from Components.Sources.StaticText import StaticText
 
@@ -26,7 +26,7 @@ class MiniTVSetup(Screen,ConfigListScreen):
 	def __init__(self,session):
 		Screen.__init__(self,session)
 		self.session = session
-		self["shortcuts"] = ActionMap(["ShortcutActions", "SetupActions" ],
+		self["shortcuts"] = ActionMap(["ShortcutActions", "SetupActions"],
 		{
 			"ok": self.keySave,
 			"cancel": self.keyCancel,
@@ -41,7 +41,7 @@ class MiniTVSetup(Screen,ConfigListScreen):
 		self.createSetup()
 
 	def createSetup(self):
-		self.minitvModeEntry = getConfigListEntry(_("MiniTV Mode"), config.plugins.minitv.enable)
+		self.minitvModeEntry = (_("MiniTV Mode"), config.plugins.minitv.enable)
 		self.list = []
 		self.list.append( self.minitvModeEntry )
 		self["config"].list = self.list
@@ -49,14 +49,14 @@ class MiniTVSetup(Screen,ConfigListScreen):
 
 class MiniTV:
 	def __init__(self):
-		config.plugins.minitv.enable.addNotifier(self.miniTVChanged, initial_call = True)
-		config.misc.standbyCounter.addNotifier(self.standbyCounterChanged, initial_call = False)
+		config.plugins.minitv.enable.addNotifier(self.miniTVChanged, initial_call=True)
+		config.misc.standbyCounter.addNotifier(self.standbyCounterChanged, initial_call=False)
 
 	def miniTVChanged(self, configElement):
 		self.setMiniTV(configElement.value)
 
 	def setMiniTV(self, value):
-		cur_value = open("/proc/stb/lcd/live_enable", "r").read().strip()
+		cur_value = open("/proc/stb/lcd/live_enable").read().strip()
 		if cur_value != value:
 			open("/proc/stb/lcd/live_enable", "w").write(value)
 
