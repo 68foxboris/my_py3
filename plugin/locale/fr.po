@@ -1,0 +1,166 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-06-20 16:31+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0\n"
+
+#: ../qpip.py:654
+msgid "  Menu key : Select quad channel"
+msgstr "  Touche Menu : Sélectionner le canal quadruple"
+
+#: ../qpip.py:653
+msgid "  Red key : Show/Hide texts"
+msgstr "  Touche rouge : Afficher/Masquer le nom du canal"
+
+#: ../qpip.py:549
+msgid " (current channel)"
+msgstr " (chaîne actuelle)"
+
+#: ../qpip.py:77
+msgid " <No Channel>"
+msgstr " <Pas de chaîne>"
+
+#: ../qpip.py:297
+msgid " <empty>"
+msgstr " <vide>"
+
+#: ../qpip.py:448
+msgid "Add"
+msgstr "Ajouter"
+
+#: ../qpip.py:458
+msgid "Add New Quad Channel Entry"
+msgstr "Ajout d'une nouvelle entrée de chaîne quadruple"
+
+#: ../qpip.py:688
+msgid "Box or driver is not support Quad PiP."
+msgstr "Récepteur ou pilote n'est pas compatible Quad PiP."
+
+#: ../qpip.py:345
+#, python-format
+msgid "Choice where to put \"%s\""
+msgstr "Choix de l'endroit où mettre les \"%s\"."
+
+#: ../qpip.py:282
+msgid ""
+"EPG key : Switch to channel list\n"
+"Ok key : Remove selected channel\n"
+"PVR key : Input channel name\n"
+"Exit key : Finish channel edit"
+msgstr ""
+"Touche EPG : Passer à la liste des canaux\n"
+"Touche Ok : Supprimer le canal sélectionné\n"
+"Touche PVR : Nom du canal d'entrée\n"
+"Touche Quitter : Terminer l'édition des canaux"
+
+#: ../qpip.py:280
+msgid ""
+"EPG key : Switch to quad PiP entry\n"
+"Ok key : Add to new entry\n"
+"PVR key : Input channel name\n"
+"Exit key : Finish channel edit"
+msgstr ""
+"Touche EPG : Passer à l'entrée PiP quadruple.\n"
+"Touche Ok : Ajouter à une nouvelle entrée\n"
+"Touche PVR : Nom du canal d'entrée\n"
+"Touche Quitter : Terminer l'édition des canaux"
+
+#: ../qpip.py:450
+msgid "Edit"
+msgstr "Éditer"
+
+#: ../qpip.py:460
+msgid "Edit Quad Channel Entry"
+msgstr "Modifier l'entrée de canal quadruple"
+
+#: ../plugin.py:21
+msgid "Enable Quad PiP"
+msgstr "Activer Quadruple PIP"
+
+#: ../qpip.py:466
+msgid "Exit Quad Channel Selection"
+msgstr "Quitter la sélection du canal quadruple"
+
+#: ../qpip.py:635
+msgid "Exit quad PiP"
+msgstr "Sortie quadruple PiP"
+
+#: ../qpip.py:271
+msgid "Input channel name."
+msgstr "Entrez le nom du canal."
+
+#: ../qpip.py:645
+msgid "Next quad PiP channel"
+msgstr "Canal PiP quadruple suivant"
+
+#: ../qpip.py:954
+msgid "No channel"
+msgstr "Aucune chaîne"
+
+#: ../qpip.py:644
+msgid "Prev quad PiP channel"
+msgstr "Canal PiP quadruple précédent"
+
+#: ../qpip.py:419
+msgid "Quad PiP Channel Selection"
+msgstr "Quadruple PiP Channel Selection"
+
+#: ../qpip.py:630
+msgid "Quad PiP Screen"
+msgstr "Quadruple écran PiP"
+
+#: ../qpip.py:123
+msgid "Quad PiP channel "
+msgstr "Quadruple canal PiP "
+
+#: ../qpip.py:685
+msgid "Quad PiP is not available."
+msgstr "Quad PiP n'est pas disponible."
+
+#: ../plugin.py:22
+msgid "Quad Picture in Picture"
+msgstr "Quadruple Image dans Image"
+
+#: ../qpip.py:498
+msgid "Really delete this entry?"
+msgstr "Vraiment supprimer cette entrée?"
+
+#: ../qpip.py:449
+msgid "Remove"
+msgstr "Retirer"
+
+#: ../qpip.py:459
+msgid "Remove Quad Channel Entry"
+msgstr "Supprimer l'entrée de canal quadruple"
+
+#: ../qpip.py:447
+msgid "Select"
+msgstr "Sélectionner"
+
+#: ../qpip.py:457 ../qpip.py:465
+msgid "Select Quad Channels"
+msgstr "Sélectionner les canaux quadruples"
+
+#: ../qpip.py:637 ../qpip.py:638 ../qpip.py:639 ../qpip.py:640
+msgid "Select channel audio"
+msgstr "Choisir le canal audio"
+
+#: ../qpip.py:641 ../qpip.py:642 ../qpip.py:643
+msgid "Show channel selection"
+msgstr "Afficher la sélection de la chaîne"
+
+#: ../qpip.py:646
+msgid "Show/Hide focus bar"
+msgstr "Afficher/Masquer la barre focus"
+
+#: ../qpip.py:636
+msgid "Zap focused channel on full screen"
+msgstr "Canal Zap focalisé en plein écran"
