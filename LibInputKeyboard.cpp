@@ -147,8 +147,27 @@ constexpr auto xkbMap = make_map<xkb_keysym_t, XBMCKey>({
     // XBMCK_REWIND clashes with XBMCK_MEDIA_REWIND
     {XKB_KEY_XF86Phone, XBMCK_PHONE},
     {XKB_KEY_XF86AudioPlay, XBMCK_PLAY},
-    {XKB_KEY_XF86AudioRandomPlay, XBMCK_SHUFFLE}
+    {XKB_KEY_XF86AudioRandomPlay, XBMCK_SHUFFLE},
     // XBMCK_FASTFORWARD clashes with XBMCK_MEDIA_FASTFORWARD
+    
+    //Remotebuttons
+    { XKB_KEY_XF86AudioCycleTrack , XBMCK_a },
+    { XKB_KEY_XF86AudioNext , XBMCK_MEDIA_NEXT_TRACK },
+    { XKB_KEY_XF86AudioPrev , XBMCK_MEDIA_PREV_TRACK },
+    { XKB_KEY_XF86Close, XBMCK_ESCAPE },
+    { XKB_KEY_XF86Display , XBMCK_z },
+    { XKB_KEY_XF86Launch5 , XBMCK_y },
+    { XKB_KEY_XF86Launch6 , XBMCK_z },
+    { XKB_KEY_XF86Launch7 , XBMCK_z },
+    { XKB_KEY_XF86Launch8 , XBMCK_j },
+    { XKB_KEY_XF86Launch9 , XBMCK_TAB },
+    { XKB_KEY_XF86Meeting , XBMCK_o },
+    { XKB_KEY_XF86MenuKB, XBMCK_MENU },
+    { XKB_KEY_XF86Subtitle , XBMCK_l },
+    { XKB_KEY_XF86Sleep , XBMCK_SLEEP },
+    { XKB_KEY_XF86Support , XBMCK_i },
+    { XKB_KEY_XF86Time , XBMCK_EPG },
+    { XKB_KEY_XF86Video , XBMCK_c }
 });
 
 constexpr auto logLevelMap = make_map<xkb_log_level, int>({{XKB_LOG_LEVEL_CRITICAL, LOGERROR},
