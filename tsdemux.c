@@ -937,79 +937,63 @@ gst_ts_demux_do_seek (MpegTSBase * base, GstEvent * event)
   }
 
   /* configure the segment with the seek variables */
-  memcpy (&seeksegment, &base->out_segment, sizeof (GstSegment));
-  GST_LOG_OBJECT (demux, "Before seek, output segment %" GST_SEGMENT_FORMAT,
-      &seeksegment);
+GST_DEBUG_OBJECT (demux, "configuring seek");
 
-  /* record offset and rate */
-  demux->rate = rate;
-  if (!gst_segment_do_seek (&seeksegment, rate, format, flags, start_type,
-          start, stop_type, stop, &update)) {
-    GST_DEBUG_OBJECT (demux, "Seek failed in gst_segment_do_seek()");
-    goto done;
-  }
-
-  GST_DEBUG_OBJECT (demux,
-      "After seek, update %d output segment now %" GST_SEGMENT_FORMAT, update,
-      &seeksegment);
-
-  /* If the position actually changed, update == TRUE */
-  g_mutex_lock (&demux->lock);
-  if (update) {
-    GstClockTime target = seeksegment.start;
-    if (target >= SEEK_TIMESTAMP_OFFSET)
-      target -= SEEK_TIMESTAMP_OFFSET;
-    else
-      target = 0;
-
+if (start_type != GST_SEEK_TYPE_NONE) {
     start_offset =
-        mpegts_packetizer_ts_to_offset (base->packetizer, target,
-        demux->program->pcr_pid);
+        mpegts_packetizer_ts_to_offset (base->packetizer, MAX (0,
+            start - SEEK_TIMESTAMP_OFFSET), demux->program->pcr_pid);
+
     if (G_UNLIKELY (start_offset == -1)) {
       GST_WARNING_OBJECT (demux,
           "Couldn't convert start position to an offset");
-      g_mutex_unlock (&demux->lock);
       goto done;
     }
-
-    base->seek_offset = start_offset;
-    demux->last_seek_offset = base->seek_offset;
-    /* Reset segment if we're not doing an accurate seek */
-    demux->reset_segment = (!(flags & GST_SEEK_FLAG_ACCURATE));
-
-    /* Clear any existing segment - it will be recalculated after streaming recommences */
-    gst_event_replace (&demux->segment_event, NULL);
-
-    for (tmp = demux->program->stream_list; tmp; tmp = tmp->next) {
-      TSDemuxStream *stream = tmp->data;
-
-      if (flags & GST_SEEK_FLAG_ACCURATE)
-        stream->needs_keyframe = TRUE;
-
-      stream->seeked_pts = GST_CLOCK_TIME_NONE;
-      stream->seeked_dts = GST_CLOCK_TIME_NONE;
-      stream->first_pts = GST_CLOCK_TIME_NONE;
-      stream->need_newsegment = TRUE;
-    }
   } else {
-    /* Position didn't change, just update the output segment based on
-     * our new one */
-    gst_event_take (&demux->segment_event,
-        gst_event_new_segment (&seeksegment));
-    if (base->last_seek_seqnum)
-      gst_event_set_seqnum (demux->segment_event, base->last_seek_seqnum);
     for (tmp = demux->program->stream_list; tmp; tmp = tmp->next) {
       TSDemuxStream *stream = tmp->data;
+
       stream->need_newsegment = TRUE;
     }
+    gst_segment_init (&base->out_segment, GST_FORMAT_UNDEFINED);
+    if (demux->segment_event) {
+      gst_event_unref (demux->segment_event);
+      demux->segment_event = NULL;
+    }
+    demux->rate = rate;
+    res = GST_FLOW_OK;
+    goto done;
   }
-  g_mutex_unlock (&demux->lock);
 
-  /* Commit the new segment */
-  memcpy (&base->out_segment, &seeksegment, sizeof (GstSegment));
+  /* record offset and rate */
+  base->seek_offset = start_offset;
+  demux->last_seek_offset = base->seek_offset;
+  demux->rate = rate;
   /* And prepare to restart */
   gst_flow_combiner_reset (demux->flowcombiner);
   res = GST_FLOW_OK;
+
+  gst_segment_do_seek (&base->out_segment, rate, format, flags, start_type,
+      start, stop_type, stop, NULL);
+  /* Reset segment if we're not doing an accurate seek */
+  demux->reset_segment = (!(flags & GST_SEEK_FLAG_ACCURATE));
+
+  if (demux->segment_event) {
+    gst_event_unref (demux->segment_event);
+    demux->segment_event = NULL;
+  }
+
+  for (tmp = demux->program->stream_list; tmp; tmp = tmp->next) {
+    TSDemuxStream *stream = tmp->data;
+
+    if (flags & GST_SEEK_FLAG_ACCURATE)
+      stream->needs_keyframe = TRUE;
+
+    stream->seeked_pts = GST_CLOCK_TIME_NONE;
+    stream->seeked_dts = GST_CLOCK_TIME_NONE;
+    stream->need_newsegment = TRUE;
+    stream->first_pts = GST_CLOCK_TIME_NONE;
+  }
 
 done:
   return res;
