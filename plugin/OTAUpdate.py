@@ -97,6 +97,7 @@ g_ota_event_description[OTA_RCU_DONE] = "OTA Completed."
 g_ota_event_description[OTA_RCU_DISCONNECTED] = "RCU disconnected."
 g_ota_event_description[OTA_INVALID_FIRMWARE] = "invalid firmware"
 
+
 class VuRcuOtaUpdate(Screen, HelpableScreen, BluetoothTask):
 	skin = """
 		<screen position="center,center" size="660,280" title="VU RCU OTA Update">
@@ -177,7 +178,7 @@ class VuRcuOtaUpdate(Screen, HelpableScreen, BluetoothTask):
 		self.appendOTAEventCallback(False)
 		self.appendEventCallback(False)
 
-	def appendOTAEventCallback(self, value = True):
+	def appendOTAEventCallback(self, value=True):
 		if value:
 			if self.otaEventCallback not in self.vubt.pluginOtaEventHandler:
 				self.vubt.pluginOtaEventHandler.append(self.otaEventCallback)
@@ -189,7 +190,7 @@ class VuRcuOtaUpdate(Screen, HelpableScreen, BluetoothTask):
 		print("[VuRcuOtaUpdate][otaEventCallback] event : ", event)
 		print("[VuRcuOtaUpdate][otaEventCallback] value : ", value)
 
-		if event == OTA_PROGRESS_DATA: # OTA_PROGRESS_DATA
+		if event == OTA_PROGRESS_DATA:  # OTA_PROGRESS_DATA
 			self["text"].setText(_("Updateing %d %%") % value)
 			self["progress"].setValue(value)
 		elif event == OTA_RCU_DONE:
@@ -199,7 +200,7 @@ class VuRcuOtaUpdate(Screen, HelpableScreen, BluetoothTask):
 		elif event == OTA_RCU_DISCONNECTED:
 			self.exit_text = _("OTA Failed.\n%s is disconnected.") % bt_types.BT_VUPLUS_RCU_NAME
 			self.exit_text += " Press exit."
-			self["text"].setText("%s" % self.exit_text) 
+			self["text"].setText("%s" % self.exit_text)
 		else:
 			if event in g_ota_event_description:
 				self["text"].setText(_("%s") % g_ota_event_description[event])
@@ -241,7 +242,7 @@ class VuRcuOtaUpdate(Screen, HelpableScreen, BluetoothTask):
 
 	def addTaskDisconnect(self, mac, profile, name):
 		args = (mac, profile, name)
-		eventCB = {bt_types.BT_EVENT_LINK_DOWN : None}
+		eventCB = {bt_types.BT_EVENT_LINK_DOWN: None}
 		self.addTask(BluetoothTask.TASK_DISCONNECT, self.disconnectDevice, mac, args, eventCB)
 
 	def addTaskOTAStart(self):
@@ -255,7 +256,7 @@ class VuRcuOtaUpdate(Screen, HelpableScreen, BluetoothTask):
 	def __repr__(self):
 		return str(type(self)) + "(" + self.text + ")"
 
-	def appendEventCallback(self, value = True):
+	def appendEventCallback(self, value=True):
 		if value:
 			if self.eventCallback not in self.vubt.pluginEventHandler:
 				self.vubt.pluginEventHandler.append(self.eventCallback)
@@ -291,4 +292,3 @@ class VuRcuOtaUpdate(Screen, HelpableScreen, BluetoothTask):
 
 		if self.events:
 			self.eventTimer.start(10, True)
-

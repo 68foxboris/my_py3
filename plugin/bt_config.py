@@ -4,8 +4,9 @@ from Components.config import config, ConfigSelection, getConfigListEntry, Confi
 from Components.ConfigList import ConfigListScreen
 from Components.Sources.StaticText import StaticText
 
+
 class BluetoothSetupConfig(Screen, ConfigListScreen):
-	skin =	"""
+	skin = """
 		<screen position="100,100" size="530,250">
 			<ePixmap pixmap="skin_default/buttons/red.png" position="45,10" size="140,40" alphatest="on" />
 			<ePixmap pixmap="skin_default/buttons/green.png" position="345,10" size="140,40" alphatest="on" />
@@ -15,8 +16,8 @@ class BluetoothSetupConfig(Screen, ConfigListScreen):
 		</screen>
 		"""
 
-	def __init__(self,session):
-		Screen.__init__(self,session)
+	def __init__(self, session):
+		Screen.__init__(self, session)
 		self.session = session
 		self["shortcuts"] = ActionMap(["BluetoothSetupActions"],
 		{
@@ -27,7 +28,7 @@ class BluetoothSetupConfig(Screen, ConfigListScreen):
 			"vuRcuSetup": self.keyVuRcuSetup,
 		}, -2)
 		self.list = []
-		ConfigListScreen.__init__(self, self.list,session = self.session)
+		ConfigListScreen.__init__(self, self.list, session=self.session)
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("Ok"))
 
@@ -55,13 +56,13 @@ class BluetoothSetupConfig(Screen, ConfigListScreen):
 
 	def createSetup(self):
 		self.list = []
-		self.list.append( self.btaudiodelay )
-		self.list.append( self.showMsgBoxEntry )
-		self.list.append( self.lastAudioConnEntry )
-		self.list.append( self.showBatteryLowEntry )
+		self.list.append(self.btaudiodelay)
+		self.list.append(self.showMsgBoxEntry)
+		self.list.append(self.lastAudioConnEntry)
+		self.list.append(self.showBatteryLowEntry)
 		#self.list.append( self.voiceCheckDbEntry )
 		if self.skipVuRcuUpdateEntry:
-			self.list.append( self.skipVuRcuUpdateEntry )
+			self.list.append(self.skipVuRcuUpdateEntry)
 		self.list.append(self.voiceCallbackName)
 
 		self["config"].list = self.list
@@ -81,4 +82,3 @@ class BluetoothSetupConfig(Screen, ConfigListScreen):
 	def resetConfig(self):
 		for x in self["config"].list:
 			x[1].cancel()
-

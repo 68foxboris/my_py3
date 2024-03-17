@@ -41,18 +41,19 @@ BT_AUDIO_ONOFF_PROC = "/proc/stb/audio/btaudio"
 
 config.plugins.bluetoothsetup = ConfigSubsection()
 config.plugins.bluetoothsetup.enable = ConfigYesNo(default=False)
-config.plugins.bluetoothsetup.audiodelay = ConfigSelectionNumber(-1000, 1000, 5, default = -50)
+config.plugins.bluetoothsetup.audiodelay = ConfigSelectionNumber(-1000, 1000, 5, default=-50)
 config.plugins.bluetoothsetup.showMessageBox = ConfigYesNo(default=True)
 config.plugins.bluetoothsetup.showBatteryLow = ConfigYesNo(default=True)
 config.plugins.bluetoothsetup.lastAudioConnEnable = ConfigYesNo(default=True)
 config.plugins.bluetoothsetup.lastAudioConn = ConfigText(default="")
 config.plugins.bluetoothsetup.autoRestartScan = ConfigYesNo(default=True)
-config.plugins.bluetoothsetup.scanTime = ConfigSelectionNumber(8, 60, 1, default = 30)
-config.plugins.bluetoothsetup.vurcuSkipFwVer = ConfigNumber(default = 0)
-config.plugins.bluetoothsetup.voiceCheckDb = ConfigSelectionNumber(-40, -20, 1, default = -33)
-config.plugins.bluetoothsetup.voiceCallbackName = ConfigSelection(default = "Unknown", choices = [("Unknown", "Unknown")])
+config.plugins.bluetoothsetup.scanTime = ConfigSelectionNumber(8, 60, 1, default=30)
+config.plugins.bluetoothsetup.vurcuSkipFwVer = ConfigNumber(default=0)
+config.plugins.bluetoothsetup.voiceCheckDb = ConfigSelectionNumber(-40, -20, 1, default=-33)
+config.plugins.bluetoothsetup.voiceCallbackName = ConfigSelection(default="Unknown", choices=[("Unknown", "Unknown")])
 
 pybluetooth_instance = None
+
 
 class VoiceEventHandler:
 	def __init__(self):
@@ -93,10 +94,10 @@ class VoiceEventHandler:
 
 		if flag == "empty":
 			text = _("There is no voice input.")
-			self.session.open(MessageBox, text, type = MessageBox.TYPE_INFO, timeout=5)
+			self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, timeout=5)
 		elif flag == "listen":
 			text = _("Put your voice close to the remote control...")
-			self.voiceMsg = self.session.open(MessageBox, text, type = MessageBox.TYPE_INFO, enable_input = False)
+			self.voiceMsg = self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, enable_input=False)
 
 	def setMute(self):
 		volumeControlHandle = eDVBVolumecontrol.getInstance()
@@ -148,7 +149,8 @@ class VoiceEventHandler:
 		for callback in self.findVoiceCallbackByName(name):
 			try:
 				callback(bt_types.BT_VOICE_PATH)
-			except:	pass
+			except:
+				pass
 
 	def updateCallbackNameList(self):
 		voiceCallbackNameList = [("Default", "Default")]
@@ -156,7 +158,7 @@ class VoiceEventHandler:
 			callbackItem = (x[2], x[2])
 			if callbackItem not in voiceCallbackNameList:
 				voiceCallbackNameList.append(callbackItem)
-		config.plugins.bluetoothsetup.voiceCallbackName = ConfigSelection(default = "Default", choices = voiceCallbackNameList)
+		config.plugins.bluetoothsetup.voiceCallbackName = ConfigSelection(default="Default", choices=voiceCallbackNameList)
 
 	def findListenCallbackByName(self, name):
 		for x in self.voiceHandlers:
@@ -222,12 +224,13 @@ class VoiceEventHandler:
 
 			if self.playVoiceMsg is None:
 				text = _("Playing Voice data...")
-				self.session.openWithCallback(self.closePlayVoiceMsg, MessageBox, text, type = MessageBox.TYPE_INFO, timeout = 10)
+				self.session.openWithCallback(self.closePlayVoiceMsg, MessageBox, text, type=MessageBox.TYPE_INFO, timeout=10)
 
 	def closePlayVoiceMsg(self, value):
 		if self.lastServiceRef:
 			self.session.nav.playService(self.lastServiceRef)
 			self.lastServiceRef = None
+
 
 class BTVolumeControl:
 	def __init__(self):
@@ -244,6 +247,7 @@ class BTVolumeControl:
 
 	def setVolume(self, vol):
 		self.vubt.setVolume(int(vol))
+
 
 class BTAutoAudioConnect:
 	def __init__(self):
@@ -343,19 +347,19 @@ class BTAutoAudioConnect:
 
 		try:
 			global BT_AUDIO_ONOFF_PROC
-			fd = open(BT_AUDIO_ONOFF_PROC,'w')
+			fd = open(BT_AUDIO_ONOFF_PROC, 'w')
 			data = enable and "on" or "off"
 			fd.write(data)
 			fd.close()
 		except:
 			print("[BT] set %s failed!" % BT_AUDIO_ONOFF_PROC)
- 
+
 	def setBTAudioDelay(self, updateNow=True):
 		global BT_AUDIO_DELAY_PROC
 		if self.btaudioActivated:
-			data = int(config.plugins.bluetoothsetup.audiodelay.value)*90
+			data = int(config.plugins.bluetoothsetup.audiodelay.value) * 90
 			if data < 0:
-				data = hex(int('0xffffffff',16)+data-1).strip('0x')
+				data = hex(int('0xffffffff', 16) + data - 1).strip('0x')
 			elif data > 0:
 				data = hex(data).strip('0x')
 			else:
@@ -366,7 +370,7 @@ class BTAutoAudioConnect:
 		if self.btaudioActivated or updateNow:
 			try:
 				global BT_AUDIO_DELAY_PROC
-				fd = open(BT_AUDIO_DELAY_PROC,'w')
+				fd = open(BT_AUDIO_DELAY_PROC, 'w')
 				fd.write(data)
 				fd.close()
 			except:
@@ -375,7 +379,7 @@ class BTAutoAudioConnect:
 	def isAudioDeviceConnected(self):
 		return bool(self.getAudioDeviceConnected())
 
-	def	getAudioDeviceConnected(self):
+	def getAudioDeviceConnected(self):
 		audio_connected = None
 		paired_devices = self.getPairedDevice()
 		if paired_devices:
@@ -389,9 +393,10 @@ class BTAutoAudioConnect:
 
 		return audio_connected
 
+
 class BTInStandby:
 	def __init__(self):
-		config.misc.standbyCounter.addNotifier(self.standbyBegin, initial_call = False)
+		config.misc.standbyCounter.addNotifier(self.standbyBegin, initial_call=False)
 		self.enable_on_standby = False
 
 	def standbyBegin(self, configElement):
@@ -404,19 +409,20 @@ class BTInStandby:
 
 			self.disconnectAll()
 
-			time.sleep(0.2)
+			time.sleep(0.1)
 			self.disable(False)
 
 	def standbyEnd(self):
 		if self.enable_on_standby:
 			self.enable()
 
+
 class BTBatteryLevel:
 	def __init__(self):
 		self.batteryLevelTimer = eTimer()
 		self.batteryLevelTimer.callback.append(self.updateBatteryLevel)
-		self.batteryUpdateInterval = 60*60*12*1000 # every 12 hours
-		self.batteryCheckRetryTime = 15*1000 # maximum time to waiting voice stop
+		self.batteryUpdateInterval = 60 * 60 * 12 * 1000  # every 12 hours
+		self.batteryCheckRetryTime = 15 * 1000  # maximum time to waiting voice stop
 		self.lastMsgMday = -1
 		self.batteryLevel = 0
 
@@ -445,6 +451,7 @@ class BTBatteryLevel:
 			self.lastMsgMday = mDay
 			AddNotification(MessageBox, _("Battery is low. Suggest to prepare replacement batteries for using properly %s.") % bt_types.BT_VUPLUS_RCU_NAME, type=MessageBox.TYPE_INFO)
 
+
 class BTOTAProcess:
 	OTA_COMPLETE = 34
 	OTA_APP_VERSION = 2
@@ -462,13 +469,13 @@ class BTOTAProcess:
 
 		self.firmwareCheckTimer = eTimer()
 		self.firmwareCheckTimer.callback.append(self.checkFWVersion)
-		self.FWCheckRetryTime = 15*1000 # maximum time to waiting voice stop
+		self.FWCheckRetryTime = 15 * 1000  # maximum time to waiting voice stop
 		self.bd_addr = None
 		self.rcuAppVersion = None
 
 	def OTAEventCallback(self, evType, value):
 		print("[OTAEventCallback] evType : %s, value : %s" % (str(evType), str(value)))
-		
+
 		if evType == BTOTAProcess.OTA_COMPLETE:
 			self.handleOtaDoneTimer.start(0, True)
 
@@ -564,6 +571,7 @@ class BTOTAProcess:
 
 		return connected
 
+
 class BTHotplugEvent:
 	def __init__(self):
 		self.btEnableTimer = eTimer()
@@ -621,7 +629,7 @@ class BTHotplugEvent:
 			self.showBtDongleMsgTimer.start(500, True)
 		else:
 			text = _("The BT dongle has been removed. It takes 10 seconds from when the BT dongle is removed until the remote control operates in IR mode.")
-			self.session.open(MessageBox, text, type = MessageBox.TYPE_INFO, timeout = 20)
+			self.session.open(MessageBox, text, type=MessageBox.TYPE_INFO, timeout=20)
 
 	def handleInsertEvent(self):
 		self.startEnableTimer(True)
@@ -632,9 +640,10 @@ class BTHotplugEvent:
 	def checkBTUSB(self):
 		return self.vubt.checkBTUSB()
 
+
 class PyBluetoothInterface(VoiceEventHandler, BTVolumeControl, BTAutoAudioConnect, BTInStandby, BTBatteryLevel, BTOTAProcess, BTHotplugEvent):
-	BT_STATUS_DISABLED	= 0
-	BT_STATUS_ENABLED	= 1
+	BT_STATUS_DISABLED = 0
+	BT_STATUS_ENABLED = 1
 
 	def __init__(self):
 		self.vubt = vubt.Vu_PyBluetooth()
@@ -727,7 +736,7 @@ class PyBluetoothInterface(VoiceEventHandler, BTVolumeControl, BTAutoAudioConnec
 								text = _("%s is connected.") % name
 							elif evType == bt_types.BT_EVENT_DISCONNECTED:
 								text = _("%s is disconnected.") % name
-							AddPopup(text = text, type = MessageBox.TYPE_INFO, timeout = 5, id = "bt_event_connected")
+							AddPopup(text=text, type=MessageBox.TYPE_INFO, timeout=5, id="bt_event_connected")
 
 		except Exception as e:
 			print("[BT] exception error : %s" % str(e))
@@ -776,7 +785,7 @@ class PyBluetoothInterface(VoiceEventHandler, BTVolumeControl, BTAutoAudioConnec
 		except Exception as e:
 			print("[bleEventCallback] exception error : %s" % str(e))
 
-	def onOffChanged(self, value = True):
+	def onOffChanged(self, value=True):
 		if value and (not self.isEnabled()):
 			self.enable()
 		elif (not value) and self.isEnabled():
@@ -804,7 +813,7 @@ class PyBluetoothInterface(VoiceEventHandler, BTVolumeControl, BTAutoAudioConnec
 		print("[BT] current status : %s" % str(self.status))
 
 		for handler in self.pluginStatusHandler:
-			handler(self.status)			
+			handler(self.status)
 
 	def startScan(self, isBle=False):
 		return self.vubt.startScan(False, isBle)
@@ -860,26 +869,32 @@ class PyBluetoothInterface(VoiceEventHandler, BTVolumeControl, BTAutoAudioConnec
 
 	def setVoiceCheckDB(self, value):
 		int_value = int(value)
-		print("[setVoiceCheckDB] value : %d" %  int_value)
+		print("[setVoiceCheckDB] value : %d" % int_value)
 		self.vubt.setVoiceCheckDB(int_value)
 
+
 pybluetooth_instance = PyBluetoothInterface()
+
 
 def BluetoothOnOffChanged(configElement):
 	global pybluetooth_instance
 	pybluetooth_instance.onOffChanged(configElement.value)
 
+
 config.plugins.bluetoothsetup.enable.addNotifier(BluetoothOnOffChanged)
+
 
 def BluetoothAudioDelayChanged(configElement):
 	global pybluetooth_instance
 	pybluetooth_instance.setBTAudioDelay(False)
 
+
 config.plugins.bluetoothsetup.audiodelay.addNotifier(BluetoothAudioDelayChanged)
+
 
 def BluetoothVoiceCheckValChanged(configElement):
 	global pybluetooth_instance
 	pybluetooth_instance.setVoiceCheckDB(configElement.value)
 
-config.plugins.bluetoothsetup.voiceCheckDb.addNotifier(BluetoothVoiceCheckValChanged)
 
+config.plugins.bluetoothsetup.voiceCheckDb.addNotifier(BluetoothVoiceCheckValChanged)

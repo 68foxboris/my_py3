@@ -16,6 +16,7 @@ from .bt_task import BluetoothTask
 from . import bt_types
 from .OTAUpdate import VuRcuOtaUpdate
 
+
 class BluetoothSetup(BluetoothTask):
 	def __init__(self):
 		BluetoothTask.__init__(self)
@@ -24,7 +25,7 @@ class BluetoothSetup(BluetoothTask):
 		self.eventTimer.callback.append(self.handleEvents)
 		self.events = []
 
-	def appendEventCallback(self, value = True):
+	def appendEventCallback(self, value=True):
 		if value:
 			if self.eventCallback not in self.vubt.pluginEventHandler:
 				self.vubt.pluginEventHandler.append(self.eventCallback)
@@ -115,13 +116,13 @@ class BluetoothSetup(BluetoothTask):
 	def addTaskConnect(self, mac, profile, name):
 		args = (mac, profile, name)
 		eventCB = {
-			bt_types.BT_EVENT_CONNECTED : None,
+			bt_types.BT_EVENT_CONNECTED: None,
 			bt_types.BT_EVENT_CONNECT_TIMEOUT: self.onConnectTimeout}
 		self.addTask(BluetoothTask.TASK_CONNECT, self.connectDevice, mac, args, eventCB)
 
 	def addTaskDisconnect(self, mac, profile, name):
 		args = (mac, profile, name)
-		eventCB = {bt_types.BT_EVENT_LINK_DOWN : None}
+		eventCB = {bt_types.BT_EVENT_LINK_DOWN: None}
 		self.addTask(BluetoothTask.TASK_DISCONNECT, self.disconnectDevice, mac, args, eventCB)
 
 	def addTaskRemove(self, mac, profile, name):
@@ -130,7 +131,7 @@ class BluetoothSetup(BluetoothTask):
 
 	def addTaskWaitDisconnect(self, mac, profile, name):
 		args = (mac, profile, name)
-		eventCB = {bt_types.BT_EVENT_LINK_DOWN : None}
+		eventCB = {bt_types.BT_EVENT_LINK_DOWN: None}
 		self.addTask(BluetoothTask.TASK_WAIT_DISCONNECT, None, mac, args, eventCB)
 
 	def addTaskStartRcuSetupTimer(self):
@@ -151,7 +152,7 @@ class BluetoothSetup(BluetoothTask):
 	def updateKeyDesc(self):
 		pass
 
-	def updateDescription(self, text = None):
+	def updateDescription(self, text=None):
 		pass
 
 	def updateDeviceList(self):
@@ -159,6 +160,7 @@ class BluetoothSetup(BluetoothTask):
 
 	def eventHandled(self):
 		pass
+
 
 class BluetoothSetupScreen(Screen, HelpableScreen, BluetoothSetup):
 	skin = """
@@ -188,16 +190,19 @@ class BluetoothSetupScreen(Screen, HelpableScreen, BluetoothSetup):
 			<widget source="description" render="Label" position="30,410" size="600,90" font="Regular;28" halign="center" valign="center" />
 		</screen>
 		"""
+
 	def __init__(self, session):
 		Screen.__init__(self, session)
 		HelpableScreen.__init__(self)
 		BluetoothSetup.__init__(self)
-		self.session = session	
+		self.session = session
 
 		self["key_red"] = Label(_("Enable"))
 		self["key_green"] = Label(" ")
 		self["key_yellow"] = Label(" ")
 		self["key_blue"] = Label(_("Scan"))
+
+		self["key_menu"] = StaticText(_("MENU"))
 
 		self["shortcuts"] = HelpableActionMap(self, "BluetoothSetupActions",
 		{
@@ -265,7 +270,7 @@ class BluetoothSetupScreen(Screen, HelpableScreen, BluetoothSetup):
 
 		cur = self["deviceList"].getCurrent()
 		if cur:
-			mac = cur[4]["bd_addr"] # mac
+			mac = cur[4]["bd_addr"]  # mac
 
 		return mac
 
@@ -274,7 +279,7 @@ class BluetoothSetupScreen(Screen, HelpableScreen, BluetoothSetup):
 
 		cur = self["deviceList"].getCurrent()
 		if cur:
-			name = cur[4]["name"] # mac
+			name = cur[4]["name"]  # mac
 
 		return name
 
@@ -293,7 +298,7 @@ class BluetoothSetupScreen(Screen, HelpableScreen, BluetoothSetup):
 		cur = self["deviceList"].getCurrent()
 		if cur:
 			profile = cur[4]["profile"]
-			is_audio = isAudioProfile(profile) # is audio
+			is_audio = isAudioProfile(profile)  # is audio
 
 		return is_audio
 
@@ -346,7 +351,7 @@ class BluetoothSetupScreen(Screen, HelpableScreen, BluetoothSetup):
 
 				icon = getIcon(profile)
 
-				deviceEntry = ( name, classOfDevice, status, icon, v)
+				deviceEntry = (name, classOfDevice, status, icon, v)
 				self.deviceList.append(deviceEntry)
 
 		print("[showPairedList] self.deviceList : ", self.deviceList)
@@ -459,7 +464,7 @@ class BluetoothSetupScreen(Screen, HelpableScreen, BluetoothSetup):
 		self.appendEventCallback(False)
 		self.session.openWithCallback(self.BTScanCB, BluetoothDiscoveryScreen)
 
-	def BTScanCB(self, msg = None):
+	def BTScanCB(self, msg=None):
 		self.appendEventCallback()
 		self.updateAll(msg)
 
@@ -490,7 +495,7 @@ class BluetoothSetupScreen(Screen, HelpableScreen, BluetoothSetup):
 			self["key_yellow"].setText("")
 			self["key_blue"].setText("")
 
-	def updateDescription(self, text = None):
+	def updateDescription(self, text=None):
 		if text is None:
 			if self.isEnabled():
 				text = _("Device is enabled.")
@@ -547,7 +552,7 @@ class BluetoothSetupScreen(Screen, HelpableScreen, BluetoothSetup):
 		self.appendEventCallback(False)
 		self.session.openWithCallback(self.BluetoothRCUSetupCB, BluetoothRCUSetup, autoStart=autoStart)
 
-	def BluetoothRCUSetupCB(self, msg = None):
+	def BluetoothRCUSetupCB(self, msg=None):
 		self.appendEventCallback()
 		self.updateAll(msg)
 
@@ -561,7 +566,7 @@ class BluetoothSetupScreen(Screen, HelpableScreen, BluetoothSetup):
 		_profile = None
 		_isConnected = False
 		for d in self.deviceList:
-			if d[4] ['name'] == bt_types.BT_VUPLUS_RCU_NAME:
+			if d[4]['name'] == bt_types.BT_VUPLUS_RCU_NAME:
 				_mac = d[4]['bd_addr']
 				_name = d[4]['name']
 				_profile = d[4]['profile']
@@ -577,7 +582,7 @@ class BluetoothSetupScreen(Screen, HelpableScreen, BluetoothSetup):
 		)
 
 		from Screens.ChoiceBox import ChoiceBox
-		self.session.openWithCallback(self.selectScanTypeConfirmed, ChoiceBox, title=_("Please select scan mode."), list = scanChoice)
+		self.session.openWithCallback(self.selectScanTypeConfirmed, ChoiceBox, title=_("Please select scan mode."), list=scanChoice)
 
 	def selectScanTypeConfirmed(self, answer):
 		answer = answer and answer[1]

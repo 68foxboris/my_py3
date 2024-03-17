@@ -1,4 +1,6 @@
+from __future__ import print_function
 from enigma import eTimer
+
 
 class BluetoothState:
 	STATE_NONE = 0
@@ -56,6 +58,7 @@ class BluetoothState:
 	def setPairing(self):
 		self.setState(self.STATE_PAIRING)
 
+
 class BluetoothTask(BluetoothState):
 	TASK_CONNECT = 0
 	TASK_DISCONNECT = 1
@@ -71,7 +74,7 @@ class BluetoothTask(BluetoothState):
 		self.curTask = None
 		self.doNextTmer = eTimer()
 		self.doNextTmer.callback.append(self.doNext)
-		self.doNextInterval = 100 # ms
+		self.doNextInterval = 100  # ms
 
 	def updateState(self, taskType):
 		if taskType == self.TASK_CONNECT:
@@ -88,8 +91,8 @@ class BluetoothTask(BluetoothState):
 			pass
 
 	def addTask(self, taskType, callFunc, mac, args, eventCB):
-		task = {"taskType" : taskType, "callFunc" : callFunc, "mac": mac, "args" : args, "eventCB" : eventCB}
-		#print "==> addTask : "
+		task = {"taskType": taskType, "callFunc": callFunc, "mac": mac, "args": args, "eventCB": eventCB}
+		#print("==> addTask : ")
 		#self.printTask(task)
 
 		if self.isTaskEmpty():
@@ -98,7 +101,7 @@ class BluetoothTask(BluetoothState):
 			self.tasks.append(task)
 
 	def doTask(self, task):
-		#print "==> doTask : "
+		#print("==> doTask : ")
 		#self.printTask(task)
 
 		callFunc = task["callFunc"]
@@ -136,7 +139,7 @@ class BluetoothTask(BluetoothState):
 		#print "==> handleEvent event : ", event
 		#print "==> handleEvent name : ", name
 		#print "==> handleEvent data : ", data
-		#print "==> handleEvent self.curTask : "
+		#print("==> handleEvent self.curTask : ")
 		#self.printTask(self.curTask)
 
 		if self.curTask is None:
@@ -158,10 +161,10 @@ class BluetoothTask(BluetoothState):
 				self.doNextTmer.start(self.doNextInterval, True)
 
 	def doNext(self):
-		#print "==> doNext self.tasks :"
+		#print("==> doNext self.tasks :")
 		#for t in self.tasks:
 		#	self.printTask(t)
-		#print "==> doNext self.curTask :"
+		#print("==> doNext self.curTask :")
 		#self.printTask(self.curTask)
 
 		if self.curTask:
@@ -179,7 +182,7 @@ class BluetoothTask(BluetoothState):
 		return None
 
 	def removeTask(self, taskType):
-		while 1:
+		while True:
 			task = self.findTask(taskType)
 			if task:
 				self.tasks.remove(task)
@@ -197,13 +200,13 @@ class BluetoothTask(BluetoothState):
 			return
 
 		taskDesc = {
-			self.TASK_CONNECT : "TASK_CONNECT",
-			self.TASK_DISCONNECT : "TASK_DISCONNECT",
-			self.TASK_WAIT_DISCONNECT : "TASK_WAIT_DISCONNECT",
-			self.TASK_START_SCAN : "TASK_START_SCAN",
-			self.TASK_START_PAIRING : "TASK_START_PAIRING",
-			self.TASK_CALL_FUNC : "TASK_CALL_FUNC",
-			self.TASK_EXIT : "TASK_EXIT"
+			self.TASK_CONNECT: "TASK_CONNECT",
+			self.TASK_DISCONNECT: "TASK_DISCONNECT",
+			self.TASK_WAIT_DISCONNECT: "TASK_WAIT_DISCONNECT",
+			self.TASK_START_SCAN: "TASK_START_SCAN",
+			self.TASK_START_PAIRING: "TASK_START_PAIRING",
+			self.TASK_CALL_FUNC: "TASK_CALL_FUNC",
+			self.TASK_EXIT: "TASK_EXIT"
 		}
 
 		print("		taskType : ", taskDesc[task["taskType"]])

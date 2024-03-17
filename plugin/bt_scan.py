@@ -11,6 +11,7 @@ from .bt_config import BluetoothSetupConfig
 from . import bt_types
 from .bt_task import BluetoothTask
 
+
 class BluetoothDiscovery(BluetoothTask):
 	def __init__(self):
 		BluetoothTask.__init__(self)
@@ -51,13 +52,13 @@ class BluetoothDiscovery(BluetoothTask):
 		self.appendEventCallback()
 
 		self.descriptionList = {
-			bt_types.BT_EVENT_PAIRING_SUCCESS	: _("%s is connected."),
-			bt_types.BT_EVENT_PAIRING_FAIL		: _("%s Pairing fail"),
-			bt_types.BT_EVENT_PAIRING_TIMEOUT	: _("Can't communicate with %s"),
-			bt_types.BT_EVENT_PAIRING_WRONG_PIN	: _("Wrong pin number for %s. Please try again and check pin number."),
-			bt_types.BT_EVENT_DISCONNECTED		: _("%s is disconnected.")}
+			bt_types.BT_EVENT_PAIRING_SUCCESS: _("%s is connected."),
+			bt_types.BT_EVENT_PAIRING_FAIL: _("%s Pairing fail"),
+			bt_types.BT_EVENT_PAIRING_TIMEOUT: _("Can't communicate with %s"),
+			bt_types.BT_EVENT_PAIRING_WRONG_PIN: _("Wrong pin number for %s. Please try again and check pin number."),
+			bt_types.BT_EVENT_DISCONNECTED: _("%s is disconnected.")}
 
-	def appendEventCallback(self, value = True):
+	def appendEventCallback(self, value=True):
 		if value:
 			if self.discEventCallback not in self.vubt.pluginEventHandler:
 				self.vubt.pluginEventHandler.append(self.discEventCallback)
@@ -124,7 +125,7 @@ class BluetoothDiscovery(BluetoothTask):
 			self.eventTimer.start(10, True)
 
 	def handleEvents(self):
-		(event, name, data) = self.events.pop(0) 
+		(event, name, data) = self.events.pop(0)
 
 		if event == bt_types.BT_EVENT_DEVICE_ADDED:
 			self.onDeviceAdded(event, name, data)
@@ -144,7 +145,7 @@ class BluetoothDiscovery(BluetoothTask):
 	def startScan(self):
 		ret = self.vubt.startScan()
 		if ret:
-			self.scanAbortTimer.start(int(config.plugins.bluetoothsetup.scanTime.value)*1000, True)
+			self.scanAbortTimer.start(int(config.plugins.bluetoothsetup.scanTime.value) * 1000, True)
 			self.displayScanMsgStart()
 		else:
 			text = _("Scan failed! try again.")
@@ -197,7 +198,7 @@ class BluetoothDiscovery(BluetoothTask):
 
 	def addTaskStartScan(self):
 		if self.isTaskEmpty():
-			eventCB = {bt_types.BT_EVENT_SCAN_END : self.onScanFinished}
+			eventCB = {bt_types.BT_EVENT_SCAN_END: self.onScanFinished}
 			BluetoothTask.addTask(self, BluetoothTask.TASK_START_SCAN, self.startScan, None, None, eventCB)
 
 	def addTaskAbortScan(self):
@@ -214,11 +215,11 @@ class BluetoothDiscovery(BluetoothTask):
 			self.addTaskAbortScan()
 
 		args = (mac, profile, name)
-		eventCB = {bt_types.BT_EVENT_PAIRING_SUCCESS : self.onPairingSuccess,
-					bt_types.BT_EVENT_PAIRING_FAIL : self.onPairingFailed,
-					bt_types.BT_EVENT_PAIRING_TIMEOUT : self.onPairingFailed,
-					bt_types.BT_EVENT_PAIRING_WRONG_PIN : self.onPairingFailed,
-					bt_types.BT_EVENT_PAIRING_PASSCODE_REQUIRED : self.onPairingFailed}
+		eventCB = {bt_types.BT_EVENT_PAIRING_SUCCESS: self.onPairingSuccess,
+					bt_types.BT_EVENT_PAIRING_FAIL: self.onPairingFailed,
+					bt_types.BT_EVENT_PAIRING_TIMEOUT: self.onPairingFailed,
+					bt_types.BT_EVENT_PAIRING_WRONG_PIN: self.onPairingFailed,
+					bt_types.BT_EVENT_PAIRING_PASSCODE_REQUIRED: self.onPairingFailed}
 		BluetoothTask.addTask(self, BluetoothTask.TASK_START_PAIRING, self.startPairing, mac, args, eventCB)
 
 	def addTaskCancelPair(self, mac, profile, name):
@@ -233,7 +234,7 @@ class BluetoothDiscovery(BluetoothTask):
 			return
 
 		args = (mac, profile, name)
-		eventCB = {bt_types.BT_EVENT_LINK_DOWN : self.onDisconnected}
+		eventCB = {bt_types.BT_EVENT_LINK_DOWN: self.onDisconnected}
 		self.addTask(BluetoothTask.TASK_DISCONNECT, self.disconnectDevice, mac, args, eventCB)
 
 	def addTaskExit(self):
@@ -275,7 +276,7 @@ class BluetoothDiscovery(BluetoothTask):
 	def onDeviceAdded(self, event, name, data):
 		self.updateDeviceList()
 
-	def doExit(self, msg = None):
+	def doExit(self, msg=None):
 		pass
 
 	def updateDeviceList(self):
@@ -286,6 +287,7 @@ class BluetoothDiscovery(BluetoothTask):
 
 	def eventHandled(self):
 		pass
+
 
 class BluetoothDiscoveryScreen(Screen, BluetoothDiscovery):
 	skin = """
@@ -315,17 +317,17 @@ class BluetoothDiscoveryScreen(Screen, BluetoothDiscovery):
 		</screen>
 		"""
 
-	def __init__(self,session):
+	def __init__(self, session):
 		Screen.__init__(self, session)
 		BluetoothDiscovery.__init__(self)
-		self.session = session	
+		self.session = session
 
 		self["key_red"] = Label(_("Exit"))
 		self["key_green"] = Label(" ")
 		self["key_yellow"] = Label(" ")
 		self["key_blue"] = Label(" ")
 
-		self["shortcuts"] = ActionMap(["BluetoothSetupActions" ],
+		self["shortcuts"] = ActionMap(["BluetoothSetupActions"],
 		{
 			"ok": self.keyOk,
 			"cancel": self.keyCancel,
@@ -428,7 +430,7 @@ class BluetoothDiscoveryScreen(Screen, BluetoothDiscovery):
 		elif self.isScanning():
 			self.addTaskAbortScan()
 
-	def doExit(self, msg = None):
+	def doExit(self, msg=None):
 		if msg:
 			self.close(msg)
 		else:
@@ -463,13 +465,14 @@ class BluetoothDiscoveryScreen(Screen, BluetoothDiscovery):
 		self.addTaskExit()
 
 	def keyOk(self):
-		self.keyGreen() 
+		self.keyGreen()
 
 	def keyCancel(self):
 		self.keyRed()
 
 	def keyMenu(self):
 		self.session.open(BluetoothSetupConfig)
+
 
 class BluetoothRCUSetup(BluetoothDiscoveryScreen):
 	def __init__(self, session, autoStart=True):
@@ -487,7 +490,7 @@ class BluetoothRCUSetup(BluetoothDiscoveryScreen):
 
 		self.pairingTimer = eTimer()
 		self.pairingTimer.callback.append(self.pairingTimerCB)
-		self.MaxscanTime = 10 # sec
+		self.MaxscanTime = 10  # sec
 		self.scanRetry = 3
 
 		self.scanningText = _("Scanning VUPLUS BLE RCU")
@@ -524,7 +527,7 @@ class BluetoothRCUSetup(BluetoothDiscoveryScreen):
 	def startScan(self):
 		ret = self.vubt.startScan(True)
 		if ret:
-			self.scanAbortTimer.start(self.MaxscanTime*1000, True)
+			self.scanAbortTimer.start(self.MaxscanTime * 1000, True)
 			self.displayScanMsgStart()
 
 		else:
@@ -544,7 +547,7 @@ class BluetoothRCUSetup(BluetoothDiscoveryScreen):
 				device_info = v.copy()
 				bd_addr = device_info['bd_addr']
 				name = device_info["name"]
-				desc = "%s (%s)" % (name , bd_addr)
+				desc = "%s (%s)" % (name, bd_addr)
 
 				icon = getIcon(bt_types.BT_PROFILE_VU_RC)
 				deviceEntry = (desc, icon, device_info)
@@ -556,7 +559,7 @@ class BluetoothRCUSetup(BluetoothDiscoveryScreen):
 	def getVuRCUInfo(self):
 		vuRcuDevInfo = []
 		for d in self.deviceList:
-			if d[2] ['name'] == bt_types.BT_VUPLUS_RCU_NAME:
+			if d[2]['name'] == bt_types.BT_VUPLUS_RCU_NAME:
 				_mac = d[2]['bd_addr']
 				_name = d[2]['name']
 				_profile = d[2]['profile']
@@ -574,7 +577,7 @@ class BluetoothRCUSetup(BluetoothDiscoveryScreen):
 			self.pairingTimer.start(1000, True)
 		else:
 			if self.scanRetry:
-				self.scanRetry -=1
+				self.scanRetry -= 1
 				self.scanTimer.start(0, True)
 			else:
 				text = _("%s is not found.") % (bt_types.BT_VUPLUS_RCU_NAME)
@@ -593,4 +596,3 @@ class BluetoothRCUSetup(BluetoothDiscoveryScreen):
 	def onDeviceAdded(self, event, name, data):
 		if name == bt_types.BT_VUPLUS_RCU_NAME:
 			self.scanAbortTimer.start(10, True)
-

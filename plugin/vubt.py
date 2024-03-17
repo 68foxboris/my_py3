@@ -4,68 +4,52 @@
 # Do not make changes to this file unless you know what you are doing--modify
 # the SWIG interface file instead.
 
+from . import _vubt
 
 
-
-
-from sys import version_info
-if version_info >= (2,6,0):
-    def swig_import_helper():
-        from os.path import dirname
-        import imp
-        fp = None
-        try:
-            fp, pathname, description = imp.find_module('_vubt', [dirname(__file__)])
-        except ImportError:
-            import _vubt
-            return _vubt
-        if fp is not None:
-            try:
-                _mod = imp.load_module('_vubt', fp, pathname, description)
-            finally:
-                fp.close()
-            return _mod
-    _vubt = swig_import_helper()
-    del swig_import_helper
-else:
-    import _vubt
-del version_info
-try:
-    _swig_property = property
-except NameError:
-    pass # Python < 2.2 doesn't have 'property'.
-def _swig_setattr_nondynamic(self,class_type,name,value,static=1):
-    if (name == "thisown"): return self.this.own(value)
+def _swig_setattr_nondynamic(self, class_type, name, value, static=1):
+    if (name == "thisown"):
+        return self.this.own(value)
     if (name == "this"):
         if type(value).__name__ == 'SwigPyObject':
             self.__dict__[name] = value
             return
-    method = class_type.__swig_setmethods__.get(name,None)
-    if method: return method(self,value)
+    method = class_type.__swig_setmethods__.get(name, None)
+    if method:
+        return method(self, value)
     if (not static):
         self.__dict__[name] = value
     else:
         raise AttributeError("You cannot add attributes to %s" % self)
 
-def _swig_setattr(self,class_type,name,value):
-    return _swig_setattr_nondynamic(self,class_type,name,value,0)
 
-def _swig_getattr(self,class_type,name):
-    if (name == "thisown"): return self.this.own()
-    method = class_type.__swig_getmethods__.get(name,None)
-    if method: return method(self)
+def _swig_setattr(self, class_type, name, value):
+    return _swig_setattr_nondynamic(self, class_type, name, value, 0)
+
+
+def _swig_getattr(self, class_type, name):
+    if (name == "thisown"):
+        return self.this.own()
+    method = class_type.__swig_getmethods__.get(name, None)
+    if method:
+        return method(self)
     raise AttributeError(name)
 
+
 def _swig_repr(self):
-    try: strthis = "proxy of " + self.this.__repr__()
-    except: strthis = ""
+    try:
+        strthis = "proxy of " + self.this.__repr__()
+    except:
+        strthis = ""
     return "<%s.%s; %s >" % (self.__class__.__module__, self.__class__.__name__, strthis,)
+
 
 try:
     _object = object
     _newclass = 1
 except AttributeError:
-    class _object : pass
+    class _object:
+        pass
     _newclass = 0
 
 
@@ -75,12 +59,15 @@ class Vu_PyBluetooth(_object):
     __swig_getmethods__ = {}
     __getattr__ = lambda self, name: _swig_getattr(self, Vu_PyBluetooth, name)
     __repr__ = _swig_repr
-    def __init__(self): 
+
+    def __init__(self):
         this = _vubt.new_Vu_PyBluetooth()
-        try: self.this.append(this)
-        except: self.this = this
+        try:
+            self.this.append(this)
+        except:
+            self.this = this
     __swig_destroy__ = _vubt.delete_Vu_PyBluetooth
-    __del__ = lambda self : None;
+    __del__ = lambda self: None
     def enable(self): return _vubt.Vu_PyBluetooth_enable(self)
     def disable(self): return _vubt.Vu_PyBluetooth_disable(self)
     def checkBTUSB(self): return _vubt.Vu_PyBluetooth_checkBTUSB(self)
@@ -120,9 +107,9 @@ class Vu_PyBluetooth(_object):
     def OTAStart(self): return _vubt.Vu_PyBluetooth_OTAStart(self)
     def OTAStop(self): return _vubt.Vu_PyBluetooth_OTAStop(self)
     def OTACheckFWVersion(self, *args): return _vubt.Vu_PyBluetooth_OTACheckFWVersion(self, *args)
+
+
 Vu_PyBluetooth_swigregister = _vubt.Vu_PyBluetooth_swigregister
 Vu_PyBluetooth_swigregister(Vu_PyBluetooth)
 
 # This file is compatible with both classic and new-style classes.
-
-
