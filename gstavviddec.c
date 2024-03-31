@@ -1845,10 +1845,15 @@ gst_ffmpegviddec_video_frame (GstFFMpegVidDec * ffmpegdec,
       ffmpegdec->picture->coded_picture_number);
   GST_DEBUG_OBJECT (ffmpegdec, "picture: display %d",
       ffmpegdec->picture->display_picture_number);
-  GST_DEBUG_OBJECT (ffmpegdec, "picture: opaque %p",
-      ffmpegdec->picture->opaque);
++#if LIBAVCODEC_VERSION_MAJOR >= 60
++  GST_DEBUG_OBJECT (ffmpegdec, "picture: opaque_ref %p",
++      ffmpegdec->picture->opaque_ref);
++#else
   GST_DEBUG_OBJECT (ffmpegdec, "picture: reordered opaque %" G_GUINT64_FORMAT,
       (guint64) ffmpegdec->picture->reordered_opaque);
++#endif
++  GST_DEBUG_OBJECT (ffmpegdec, "picture: opaque %p",
++      ffmpegdec->picture->opaque);
   GST_DEBUG_OBJECT (ffmpegdec, "repeat_pict:%d",
       ffmpegdec->picture->repeat_pict);
   GST_DEBUG_OBJECT (ffmpegdec, "corrupted frame: %d",
