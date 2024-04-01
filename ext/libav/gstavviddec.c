@@ -450,7 +450,7 @@ gst_ffmpegviddec_open (GstFFMpegVidDec * ffmpegdec)
 
   gst_ffmpegviddec_context_set_flags (ffmpegdec->context,
       AV_CODEC_FLAG_OUTPUT_CORRUPT, ffmpegdec->output_corrupt);
-#if LIBAVCODEC_VERSION_MAJOR >= 60
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT (60, 31, 100)
   gst_ffmpegviddec_context_set_flags (ffmpegdec->context,
       AV_CODEC_FLAG_COPY_OPAQUE, TRUE);
 #endif
@@ -925,7 +925,7 @@ gst_ffmpegviddec_can_direct_render (GstFFMpegVidDec * ffmpegdec)
       AV_CODEC_CAP_DR1);
 }
 
-#if LIBAVCODEC_VERSION_MAJOR >= 60
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT (60, 31, 100)
 static void
 gst_ffmpeg_opaque_free (void *opaque, guint8 * data)
 {
@@ -959,7 +959,7 @@ gst_ffmpegviddec_get_buffer2 (AVCodecContext * context, AVFrame * picture,
   /* apply the last info we have seen to this picture, when we get the
    * picture back from ffmpeg we can use this to correctly timestamp the output
    * buffer */
-#if LIBAVCODEC_VERSION_MAJOR >= 60
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT (60, 31, 100)
   {
     GstVideoCodecFrame *input_frame =
         av_buffer_get_opaque (picture->opaque_ref);
@@ -1803,7 +1803,7 @@ get_output_buffer (GstFFMpegVidDec * ffmpegdec, GstVideoCodecFrame * frame)
 
   gst_video_frame_unmap (&vframe);
 
-#if LIBAVCODEC_VERSION_MAJOR < 60
+#if LIBAVCODEC_VERSION_INT < AV_VERSION_INT (60, 31, 100)
   ffmpegdec->picture->reordered_opaque = -1;
 #endif
 
@@ -1879,7 +1879,14 @@ gst_ffmpegviddec_video_frame (GstFFMpegVidDec * ffmpegdec,
 
   /* get the output picture timing info again */
   out_dframe = ffmpegdec->picture->opaque;
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT (60, 31, 100)
+  out_frame =
+      gst_video_codec_frame_ref (av_buffer_get_opaque (ffmpegdec->
+          picture->opaque_ref));
+#else
+  g_assert (out_dframe);
   out_frame = gst_video_codec_frame_ref (out_dframe->frame);
+#endif
 
   /* also give back a buffer allocated by the frame, if any */
   gst_buffer_replace (&out_frame->output_buffer, out_dframe->buffer);
@@ -1915,11 +1922,13 @@ gst_ffmpegviddec_video_frame (GstFFMpegVidDec * ffmpegdec,
       out_frame->pts, out_frame->duration);
   GST_DEBUG_OBJECT (ffmpegdec, "picture: pts %" G_GUINT64_FORMAT,
       (guint64) ffmpegdec->picture->pts);
+#if LIBAVUTIL_VERSION_MAJOR < 58
   GST_DEBUG_OBJECT (ffmpegdec, "picture: num %d",
       ffmpegdec->picture->coded_picture_number);
   GST_DEBUG_OBJECT (ffmpegdec, "picture: display %d",
       ffmpegdec->picture->display_picture_number);
-#if LIBAVCODEC_VERSION_MAJOR >= 60
+#endif
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT (60, 31, 100)
   GST_DEBUG_OBJECT (ffmpegdec, "picture: opaque_ref %p",
       ffmpegdec->picture->opaque_ref);
 #else
@@ -1931,7 +1940,7 @@ gst_ffmpegviddec_video_frame (GstFFMpegVidDec * ffmpegdec,
   GST_DEBUG_OBJECT (ffmpegdec, "repeat_pict:%d",
       ffmpegdec->picture->repeat_pict);
   GST_DEBUG_OBJECT (ffmpegdec, "corrupted frame: %d",
-      ! !(ffmpegdec->picture->flags & AV_FRAME_FLAG_CORRUPT));
+      !!(ffmpegdec->picture->flags & AV_FRAME_FLAG_CORRUPT));
 
   if (!gst_ffmpegviddec_negotiate (ffmpegdec, ffmpegdec->context,
           ffmpegdec->picture, GST_BUFFER_FLAGS (out_frame->input_buffer)))
@@ -2110,7 +2119,7 @@ gst_ffmpegviddec_frame (GstFFMpegVidDec * ffmpegdec, GstVideoCodecFrame * frame,
     goto no_codec;
 
   *ret = GST_FLOW_OK;
-#if LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(60, 2, 100)
+#if LIBAVCODEC_VERSION_MAJOR >= 60
   ffmpegdec->context->frame_num++;
 #else
   ffmpegdec->context->frame_number++;
@@ -2232,7 +2241,7 @@ gst_ffmpegviddec_handle_frame (GstVideoDecoder * decoder,
 
   /* Store a reference to the input frame. This will be carried along by FFmpeg
    * to the resulting AVPicture */
-#if LIBAVCODEC_VERSION_MAJOR >= 60
+#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT (60, 31, 100)
   {
     packet->opaque_ref =
         av_buffer_create (NULL, 0, gst_ffmpeg_opaque_free,
