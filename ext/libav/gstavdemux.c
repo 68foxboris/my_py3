@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include <libavformat/avformat.h>
+#include "libavformat/demux.h"
 #include <libavutil/imgutils.h>
 /* #include <ffmpeg/avi.h> */
 #include <gst/gst.h>
@@ -106,7 +107,7 @@ struct _GstFFMpegDemuxClass
 {
   GstElementClass parent_class;
 
-  AVInputFormat *in_plugin;
+  FFInputFormat *in_plugin;
   GstPadTemplate *sinktempl;
   GstPadTemplate *videosrctempl;
   GstPadTemplate *audiosrctempl;
@@ -181,12 +182,12 @@ static void
 gst_ffmpegdemux_base_init (GstFFMpegDemuxClass * klass)
 {
   GstElementClass *element_class = GST_ELEMENT_CLASS (klass);
-  AVInputFormat *in_plugin;
+  FFInputFormat *in_plugin;
   GstCaps *sinkcaps;
   GstPadTemplate *sinktempl, *audiosrctempl, *videosrctempl;
   gchar *longname, *description, *name;
 
-  in_plugin = (AVInputFormat *)
+  in_plugin = (FFInputFormat *)
       g_type_get_qdata (G_OBJECT_CLASS_TYPE (klass), GST_FFDEMUX_PARAMS_QDATA);
   g_assert (in_plugin != NULL);
 
@@ -1378,7 +1379,7 @@ static void
 gst_ffmpegdemux_type_find (GstTypeFind * tf, gpointer priv)
 {
   const guint8 *data;
-  AVInputFormat *in_plugin = (AVInputFormat *) priv;
+  FFInputFormat *in_plugin = (FFInputFormat *) priv;
   gint res = 0;
   guint64 length;
   GstCaps *sinkcaps;
@@ -2003,7 +2004,7 @@ gboolean
 gst_ffmpegdemux_register (GstPlugin * plugin)
 {
   GType type;
-  const AVInputFormat *in_plugin;
+  const FFInputFormat *in_plugin;
   gchar *extensions;
   GTypeInfo typeinfo = {
     sizeof (GstFFMpegDemuxClass),
