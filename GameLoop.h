@@ -33,7 +33,7 @@ public:
   virtual void RewindEvent() = 0;
 };
 
-class CGameLoop : protected CThread
+class CGameLoop : virtual protected CThread
 {
 public:
   CGameLoop(IGameLoopCallback* callback, double fps);
